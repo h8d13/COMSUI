@@ -17,7 +17,7 @@ fi
 if [[ "$*" == *"-t"* ]] || [[ "$*" == *"-f"* ]] || [[ "$*" == *"-p"* ]]; then
     case "$1" in
         "-p")
-            echo $PATH && exit
+            info $PATH && exit
             ;;
         "-t")
             # Remove existing app files if they exist

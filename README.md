@@ -10,7 +10,7 @@ or skipped.
 -p > print paths
 -s > status and exit
 -l > adds last commit and time since
--c > add "feat: $message" to long desc
+-c > add "feat: $message" to commit desc
 or auto generated short.
 
 standard flow: git add . && git status > confirm > commit/push 
