@@ -30,13 +30,15 @@ if [[ "$*" == *"-t"* ]] || [[ "$*" == *"-f"* ]]; then
             cp lib/colors lib/sync "${HOME}${BIN_PATH}/${APP}-lib/"
 
             info "Synced $APP to ~$BIN_PATH"
-            shift  # Remove -s from arguments
+            shift  # Remove -t from arguments
+            exit 0
             ;;
         "-f")
             cp "${HOME}${BIN_PATH}/${APP}" ./"$APP"
             cp "${HOME}${BIN_PATH}/${APP}-lib/colors" "${HOME}${BIN_PATH}/${APP}-lib/sync" lib/
             info "Pulled $APP from ~$BIN_PATH"
             shift  # Remove -p from arguments
+            exit 0
             ;;
     esac
 else
