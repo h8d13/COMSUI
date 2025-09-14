@@ -10,8 +10,7 @@ fi
 BIN_PATH="/.local/bin"
 # Always check custom bin PATH set first. If not exit.
 if ! echo "$PATH" | grep -q "${HOME}${BIN_PATH}"; then
-    echo -e "${RED}0: Bin not in path ${NC}"
-    exit 1
+    die "0: Bin not in path"
 fi
 
 # Only run sync if -s or -p is in arguments
@@ -30,16 +29,16 @@ if [[ "$*" == *"-s"* ]] || [[ "$*" == *"-p"* ]]; then
             mkdir -p "${HOME}${BIN_PATH}/${APP}-lib"
             cp lib/colors lib/sync "${HOME}${BIN_PATH}/${APP}-lib/"
 
-            echo -e "${BLUE}Synced $APP to ~$BIN_PATH${NC}"
+            info "Synced $APP to ~$BIN_PATH"
             shift  # Remove -s from arguments
             ;;
         "-p")
             cp "${HOME}${BIN_PATH}/${APP}" ./"$APP"
             cp "${HOME}${BIN_PATH}/${APP}-lib/colors" "${HOME}${BIN_PATH}/${APP}-lib/sync" lib/
-            echo -e "${BLUE}Pulled $APP from ~$BIN_PATH${NC}"
+            info "Pulled $APP from ~$BIN_PATH"
             shift  # Remove -p from arguments
             ;;
     esac
 else
-    echo -e "${BLUE}skipped${NC}"
+    info "skipped"
 fi

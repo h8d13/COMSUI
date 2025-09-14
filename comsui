@@ -27,17 +27,15 @@ comsui() {
         shift 2
         ;;
       *)
-        echo -e "${RED}Unknown option: $1${NC}"
-        echo -e "${RED}Usage: comsui [-l] [-c \"custom description\"]${NC}"
-        return 1
+        die "Unknown option: $1
+Usage: comsui [-l] [-c \"custom description\"]"
         ;;
     esac
   done
 
   # Check if we're in a git repository
   if ! git rev-parse --git-dir >/dev/null 2>&1; then
-    echo -e "${RED}Error: Not in a git repository${NC}"
-    return 1
+    die "Error: Not in a git repository"
   fi
 
   # ID + Date + Count per repository
@@ -85,32 +83,32 @@ $custom_desc"
 
 Last commit: $last_commit ($last_commit_time)"
     if [[ -n "$validation" ]]; then
-      extended_body="$extended_body
+      extended_body="Feat:$extended_body
 Validation: $validation"
     fi
     msg="$msg$extended_body"
   fi
 
-  echo -e "${GREEN}git add .${NC}"
+  gitop "git add ."
   git add .
   read -p "Commit and push to origin/master? [y/N] " confirm
   if [[ "$confirm" =~ ^[Yy]$ ]]; then
-    echo -e "${GREEN}git commit -m \"$msg\"${NC}"
+    gitop "git commit -m \"$msg\""
     if git commit -m "$msg"; then
-      echo -e "${GREEN}git push origin master${NC}"
+      gitop "git push origin master"
       if git push origin master; then
         # Increment count and write back to file
         count=$((count + 1))
         echo "$count" > "$count_file"
-        echo -e "${BLUE}Count incremented to $count${NC}"
+        info "Count incremented to $count"
       else
-        echo -e "${RED}Git push failed, count not incremented.${NC}"
+        die "Git push failed, count not incremented."
       fi
     else
-      echo -e "${RED}Git commit failed, count not incremented.${NC}"
+      die "Git commit failed, count not incremented."
     fi
   else
-    echo -e "${BLUE}Aborted.${NC}"
+    info "Aborted."
   fi
 }
 
