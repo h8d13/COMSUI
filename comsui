@@ -14,7 +14,6 @@ else
 fi
 
 comsui() {
-  # Test block utility
 
   # Check for options
   extended_desc=""
@@ -34,7 +33,7 @@ comsui() {
         git -c advice.statusHints=false status
         return 0
         ;;
-      -t|-f|-p)
+      -t|-f|-p|-d)
         # These are handled by sync script, just consume and continue
         shift
         ;;

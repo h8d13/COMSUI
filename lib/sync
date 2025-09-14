@@ -11,12 +11,15 @@ fi
 
 BIN_PATH="/.local/bin"
 # Always check custom bin PATH set first. If not exit.
+if [ ! -d "${HOME}${BIN_PATH}" ]; then
+    die "No local bin."
+fi
 if ! echo "$PATH" | grep -q "${HOME}${BIN_PATH}"; then
     die "Bin not in path"
 fi
 
 # Only run sync if -t or -f is in arguments
-if [[ "$*" == *"-t"* ]] || [[ "$*" == *"-f"* ]] || [[ "$*" == *"-p"* ]]; then
+if [[ "$*" == *"-t"* ]] || [[ "$*" == *"-f"* ]] || [[ "$*" == *"-p"* ]] || [[ "$*" == *"-d"* ]]; then
     case "$1" in
         "-p")
             info $PATH && exit
@@ -44,6 +47,12 @@ if [[ "$*" == *"-t"* ]] || [[ "$*" == *"-f"* ]] || [[ "$*" == *"-p"* ]]; then
             shift  
             exit 0
             ;;
+        "-d")
+            rm -f "${HOME}${BIN_PATH}/${APP}" 
+            rm -rf "${HOME}${BIN_PATH}/${APP}-lib/"
+            info "Deleted $APP from ~$BIN_PATH"
+            shift  
+            exit 0
     esac
 else
     info "Skipped sync"

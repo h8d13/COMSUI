@@ -1,0 +1,39 @@
+ #!/bin/bash
+# template - Generic app template
+
+# Use first parameter or auto-detect app name
+if [ -n "$1" ]; then
+    APP_NAME="$1"
+elif [ -d ".git" ]; then
+    APP_NAME=$(basename "$(git rev-parse --show-toplevel)")
+else
+    APP_NAME=$(basename "$(pwd)")
+fi
+# Copy the main script structure
+cat > "$APP_NAME" << EOF
+#!/bin/bash
+
+APP=${APP_NAME}
+# Load libraries from appropriate locations
+if [ -f "\$(dirname "\$0")/\${APP}-lib/colors" ]; then
+    . "\$(dirname "\$0")/\${APP}-lib/colors"
+    . "\$(dirname "\$0")/\${APP}-lib/sync"
+    . "\$(dirname "\$0")/\${APP}-lib/block"
+else
+    . "\$(dirname "\$0")/lib/colors"
+    . "\$(dirname "\$0")/lib/sync"
+    . "\$(dirname "\$0")/lib/block"
+fi
+
+# Main app function - customize this part
+${APP_NAME}() {
+    # Your app logic here
+    echo "Running \$APP"
+}
+
+# Call the function with script name
+\$APP "\$@"
+EOF
+
+chmod +x "$APP_NAME"
+echo "Created executable: $APP_NAME"
