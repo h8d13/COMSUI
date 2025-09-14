@@ -4,19 +4,32 @@
 # Block utility - run commands with colored output
 block() {
     local color_func="info"
+    local quiet=false
+
     case "$1" in
         --info) color_func="info"; shift ;;
         --warn) color_func="warn"; shift ;;
         --gitop) color_func="gitop"; shift ;;
+        --quiet) quiet=true; shift ;;
     esac
 
-    # Show command being executed
-    $color_func "$* ..."
-
-    # Execute command with errors for syntax
-    if eval "$*"; then
-        $color_func "Done"
-    else
-        warn "Failed"
+    # Show command being executed (unless quiet)
+    if [[ "$quiet" != "true" ]]; then
+        $color_func "$* ..."
     fi
+
+    # Execute command and return exit code
+    eval "$*"
+    local exit_code=$?
+
+    # Show result (unless quiet)
+    if [[ "$quiet" != "true" ]]; then
+        if [[ $exit_code -eq 0 ]]; then
+            $color_func "Done"
+        else
+            warn "Failed"
+        fi
+    fi
+
+    return $exit_code
 }
