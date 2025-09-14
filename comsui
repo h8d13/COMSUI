@@ -88,7 +88,14 @@ Last commit: $last_commit ($last_commit_time)"
   fi
 
   block --gitop "git add ." && git -c advice.statusHints=false status
-
+  
+  #block --die "which node && echo 'Node found'"
+  #block --die "which npm && npm --version"
+  #block --warn "pgrep -f 'your-app-name' || echo 'Process not found'"
+ 
+  #block --warn "pgrep -f 'codium' || echo 'No codium processes found'"
+  #block --die "pgrep -f 'codium' | xargs -r kill -TERM || echo 'Nothing to kill'
+  
   # Check if there's anything to commit
   if block --quiet "git diff --staged --quiet"; then
     warn "No changes to commit"
