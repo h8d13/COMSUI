@@ -21,5 +21,5 @@ standard flow: git add . && git status > Make sure diff > confirm > commit/push
 ./template hello
 # uses git name by default if left empty
 
-./hello
+./hello -t > transfered to local bin
 ```

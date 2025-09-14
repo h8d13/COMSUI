@@ -11,8 +11,10 @@ fi
 
 BIN_PATH="/.local/bin"
 # Always check custom bin PATH set first. If not exit.
-if [ ! -d "${HOME}${BIN_PATH}" ]; then
-    die "No local bin."
+if [ -d "${HOME}${BIN_PATH}/" ]; then
+    info "Found local bin."
+else 
+    die "Local bin not available"
 fi
 if ! echo "$PATH" | grep -q "${HOME}${BIN_PATH}"; then
     die "Bin not in path"
