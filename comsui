@@ -55,7 +55,7 @@ Usage: comsui [-l] [-c \"custom description\"] [-p] [-s] [-t] [-f]"
   randid=$(head /dev/urandom | tr -dc A-Z0-9 | head -c 6)
   today=$(date "+%m-%d")
   repo_name=$(basename "$(git rev-parse --show-toplevel)")
-  count_file="/tmp/comsui_${repo_name}_$today"
+  count_file="/tmp/{$APP}_${repo_name}_$today"
 
   if [ ! -f "$count_file" ]; then
     echo "0" > "$count_file"
@@ -121,4 +121,4 @@ Last commit: $last_commit ($last_commit_time)"
   fi
 }
 
-comsui "$@"
+$APP "$@"
