@@ -13,7 +13,7 @@ block() {
     # Show command being executed
     $color_func "$* ..."
 
-    # Execute command
+    # Execute command with errors for syntax
     if eval "$*"; then
         $color_func "Done"
     else
