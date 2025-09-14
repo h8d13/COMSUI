@@ -7,11 +7,11 @@ comsui() {
 
   while [[ $# -gt 0 ]]; do
     case $1 in
-      -c)
+      -l)
         extended_desc=true
         shift
         ;;
-      -d)
+      -c)
         custom_desc="$2"
         shift 2
         ;;
