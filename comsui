@@ -1,6 +1,3 @@
-#!/bin/bash
-
-
 comsui() {
   # Check for options
   extended_desc=""
@@ -24,15 +21,22 @@ comsui() {
     esac
   done
 
-  # ID + Date + Count
+  # Check if we're in a git repository
+  if ! git rev-parse --git-dir >/dev/null 2>&1; then
+    echo "Error: Not in a git repository"
+    return 1
+  fi
+
+  # ID + Date + Count per repository
   randid=$(head /dev/urandom | tr -dc A-Z0-9 | head -c 6)
   today=$(date "+%m-%d")
-  count_file="/tmp/commit_count_$today"
+  git_dir=$(git rev-parse --git-dir)
+  count_file="$git_dir/comsui_count_$today"
+
   if [ ! -f "$count_file" ]; then
     echo "0" > "$count_file"
-    chmod 644 "$count_file"
   fi
-  count=$(cat "$count_file" 2>/dev/null || echo "1")
+  count=$(cat "$count_file" 2>/dev/null || echo "0")
   # Ensure count is a number
   count=$(($count + 0))
 
@@ -64,9 +68,8 @@ Extended commit details:
   fi
 
   echo "Commit suicide message: \"$msg\""
-  read -p "Add, Commit and Push to origin/master? [y/N] " confirm
   git add .
-
+  read -p "Commit and push to origin/master? [y/N] " confirm
   if [[ "$confirm" =~ ^[Yy]$ ]]; then
     if git commit -m "$msg" && git push origin master; then
       # Increment count and write back to file
