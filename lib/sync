@@ -16,12 +16,14 @@ if [ -d "${HOME}${BIN_PATH}/" ]; then
 else 
     die "Local bin not available"
 fi
+
 if ! echo "$PATH" | grep -q "${HOME}${BIN_PATH}"; then
     die "Bin not in path"
 fi
 
-# Only run sync if -t or -f is in arguments
-if [[ "$*" == *"-t"* ]] || [[ "$*" == *"-f"* ]] || [[ "$*" == *"-p"* ]] || [[ "$*" == *"-d"* ]]; then
+# Only run sync if argument matches
+case "$*" in
+    *-t*|*-f*|*-p*|*-d*)
     case "$1" in
         "-p")
             info $PATH && exit
@@ -56,6 +58,8 @@ if [[ "$*" == *"-t"* ]] || [[ "$*" == *"-f"* ]] || [[ "$*" == *"-p"* ]] || [[ "$
             shift  
             exit 0
     esac
-else
-    info "Skipped sync"
-fi
+        ;;
+    *)
+        info "Skipped sync"
+        ;;
+esac
