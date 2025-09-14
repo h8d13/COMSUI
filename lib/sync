@@ -1,8 +1,16 @@
 #!/bin/bash
 
+# Import colors from appropriate location
+if [ -f "$(dirname "$0")/${APP}-lib/colors" ]; then
+    source "$(dirname "$0")/${APP}-lib/colors"
+else
+    source "$(dirname "$0")/lib/colors"
+fi
+
+BIN_PATH="/.local/bin"
 # Always check custom bin PATH set first. If not exit.
-if ! echo "$PATH" | grep -q "$HOME/.local/bin"; then
-    echo "0"
+if ! echo "$PATH" | grep -q "${HOME}${BIN_PATH}"; then
+    echo -e "${RED}0: Bin not in path ${NC}"
     exit 1
 fi
 
@@ -11,27 +19,27 @@ if [[ "$*" == *"-s"* ]] || [[ "$*" == *"-p"* ]]; then
     case "$1" in
         "-s")
             # Remove existing app files if they exist
-            rm -f "$HOME/.local/bin/$APP"
-            rm -rf "$HOME/.local/bin/${APP}-lib"
+            rm -f "${HOME}${BIN_PATH}/${APP}"
+            rm -rf "${HOME}${BIN_PATH}/${APP}-lib"
 
             # Copy executable directly to bin
-            cp "$APP" "$HOME/.local/bin/"
-            chmod +x "$HOME/.local/bin/$APP"
+            cp "$APP" "${HOME}${BIN_PATH}/"
+            chmod +x "${HOME}${BIN_PATH}/${APP}"
 
             # Create app-lib directory
-            mkdir -p "$HOME/.local/bin/${APP}-lib"
-            cp lib/colors lib/sync "$HOME/.local/bin/${APP}-lib/"
+            mkdir -p "${HOME}${BIN_PATH}/${APP}-lib"
+            cp lib/colors lib/sync "${HOME}${BIN_PATH}/${APP}-lib/"
 
-            echo "Synced $APP to ~/.local/bin/"
+            echo -e "${BLUE}Synced $APP to ~$BIN_PATH${NC}"
             shift  # Remove -s from arguments
             ;;
         "-p")
-            cp "$HOME/.local/bin/$APP" ./"$APP"
-            cp "$HOME/.local/bin/${APP}-lib/colors" "$HOME/.local/bin/${APP}-lib/sync" lib/
-            echo "Pulled $APP from ~/.local/bin/"
+            cp "${HOME}${BIN_PATH}/${APP}" ./"$APP"
+            cp "${HOME}${BIN_PATH}/${APP}-lib/colors" "${HOME}${BIN_PATH}/${APP}-lib/sync" lib/
+            echo -e "${BLUE}Pulled $APP from ~$BIN_PATH${NC}"
             shift  # Remove -p from arguments
             ;;
     esac
 else
-    echo "skipped"
+    echo -e "${BLUE}skipped${NC}"
 fi
