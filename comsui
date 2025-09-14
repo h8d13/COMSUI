@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 comsui() {
   # Check for options
   extended_desc=""
@@ -31,9 +32,15 @@ comsui() {
     echo "0" > "$count_file"
     chmod 644 "$count_file"
   fi
-  count=$(cat "$count_file" 2>/dev/null || echo "0")
+  count=$(cat "$count_file" 2>/dev/null || echo "1")
   # Ensure count is a number
   count=$(($count + 0))
+
+  # Capture changes BEFORE git add if extended description needed
+  if [[ "$extended_desc" == "true" ]]; then
+    files_changed=$(git status --porcelain | wc -l)
+    shortstat=$(git diff HEAD --shortstat 2>/dev/null || echo "Initial commit")
+  fi
 
   msg="$randid $(date "+%H:%M") #$(printf "%03d" $count)"
 
@@ -49,16 +56,17 @@ $custom_desc"
     extended_body="
 
 Extended commit details:
-- Files changed: $(git diff --cached --name-only | wc -l)
-- Lines added/removed: $(git diff --cached --shortstat)
+- Files changed: $files_changed
+- Lines added/removed: $shortstat
 - Branch: $(git branch --show-current)
 - Timestamp: $(date)"
     msg="$msg$extended_body"
   fi
 
-  echo "Comsui message: \"$msg\""
+  echo "Commit suicide message: \"$msg\""
+  read -p "Add, Commit and Push to origin/master? [y/N] " confirm
   git add .
-  read -p "Commit and push to origin/master? [y/N] " confirm
+
   if [[ "$confirm" =~ ^[Yy]$ ]]; then
     if git commit -m "$msg" && git push origin master; then
       # Increment count and write back to file
