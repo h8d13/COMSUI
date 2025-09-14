@@ -3,17 +3,17 @@
 # Colors are already sourced by main script, no need to import again
 # Block utility - run commands with colored output
 block() {
-    
+
     local color_func="info"
-    # default if none specified
     local quiet=false
-    # returns only code
+    local die_on_fail=false
 
     case "$1" in
         --info) color_func="info"; shift ;;
         --warn) color_func="warn"; shift ;;
         --gitop) color_func="gitop"; shift ;;
         --quiet) quiet=true; shift ;;
+        --die) color_func="warn"; die_on_fail=true; shift ;;
     esac
 
     # Show command being executed (unless quiet)
@@ -32,6 +32,11 @@ block() {
         else
             warn "Failed"
         fi
+    fi
+
+    # Exit if die_on_fail is set and command failed
+    if [[ "$die_on_fail" == "true" && $exit_code -ne 0 ]]; then
+        die "Command failed - exiting"
     fi
 
     return $exit_code
