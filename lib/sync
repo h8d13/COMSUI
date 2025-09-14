@@ -10,25 +10,25 @@ fi
 if [[ "$*" == *"-s"* ]] || [[ "$*" == *"-p"* ]]; then
     case "$1" in
         "-s")
-            # Remove existing comsui files if they exist
-            rm -f "$HOME/.local/bin/comsui"
-            rm -rf "$HOME/.local/bin/comsui-lib"
+            # Remove existing app files if they exist
+            rm -f "$HOME/.local/bin/$APP"
+            rm -rf "$HOME/.local/bin/${APP}-lib"
 
             # Copy executable directly to bin
-            cp comsui "$HOME/.local/bin/"
-            chmod +x "$HOME/.local/bin/comsui"
+            cp "$APP" "$HOME/.local/bin/"
+            chmod +x "$HOME/.local/bin/$APP"
 
-            # Create comsui-lib directory
-            mkdir -p "$HOME/.local/bin/comsui-lib"
-            cp lib/colors lib/sync "$HOME/.local/bin/comsui-lib/"
+            # Create app-lib directory
+            mkdir -p "$HOME/.local/bin/${APP}-lib"
+            cp lib/colors lib/sync "$HOME/.local/bin/${APP}-lib/"
 
-            echo "Synced comsui to ~/.local/bin/ as lib/"
+            echo "Synced $APP to ~/.local/bin/ as lib/"
             shift  # Remove -s from arguments
             ;;
         "-p")
-            cp "$HOME/.local/bin/comsui" ./comsui
-            cp "$HOME/.local/bin/comsui-lib/colors" "$HOME/.local/bin/comsui-lib/sync" lib/
-            echo "Pulled comsui from ~/.local/bin/"
+            cp "$HOME/.local/bin/$APP" ./"$APP"
+            cp "$HOME/.local/bin/${APP}-lib/colors" "$HOME/.local/bin/${APP}-lib/sync" lib/
+            echo "Pulled $APP from ~/.local/bin/"
             shift  # Remove -p from arguments
             ;;
     esac

@@ -1,8 +1,11 @@
 #!/bin/bash
-# Source colors from appropriate location
-if [ -f "$(dirname "$0")/comsui-lib/colors" ]; then
-    source "$(dirname "$0")/comsui-lib/colors"
-    source "$(dirname "$0")/comsui-lib/sync"
+# App configuration
+APP=${APP:-comsui}
+
+# Source colors from appropriate locations
+if [ -f "$(dirname "$0")/${APP}-lib/colors" ]; then
+    source "$(dirname "$0")/${APP}-lib/colors"
+    source "$(dirname "$0")/${APP}-lib/sync"
 else
     source "$(dirname "$0")/lib/colors"
     source "$(dirname "$0")/lib/sync"
@@ -77,7 +80,6 @@ Extended commit details:
     msg="$msg$extended_body"
   fi
 
-  echo -e "${BLUE}Commit message: \"$msg\"${NC}"
   echo -e "${GREEN}git add .${NC}"
   git add .
   read -p "Commit and push to origin/master? [y/N] " confirm
