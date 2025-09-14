@@ -15,7 +15,6 @@ fi
 
 comsui() {
   # Test block utility
-  block --die "which git || echo 'Git not found'"
 
   # Check for options
   extended_desc=""
@@ -45,6 +44,8 @@ Usage: comsui [-t][-l] [-c \"custom description\"] [-p] [-s] [-f]"
         ;;
     esac
   done
+
+  block --die "which git || echo 'Git not found'"
 
   # Check if we're in a git repository
   if ! git rev-parse --git-dir >/dev/null 2>&1; then
