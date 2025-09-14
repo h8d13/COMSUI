@@ -89,6 +89,13 @@ Last commit: $last_commit ($last_commit_time)"
 
   gitop "git add ."
   git add . && git -c advice.statusHints=false status
+
+  # Check if there's anything to commit
+  if git diff --staged --quiet; then
+    warn "No changes to commit"
+    return 0
+  fi
+
   read -p "Commit and push to origin/master? [y/N] " confirm
   if [[ "$confirm" =~ ^[Yy]$ ]]; then
     gitop "git commit -m \"$msg\""
