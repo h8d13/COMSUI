@@ -2,13 +2,15 @@
 # App configuration
 APP=${APP:-comsui}
 
-# Source colors from appropriate locations
+# . colors from appropriate locations
 if [ -f "$(dirname "$0")/${APP}-lib/colors" ]; then
-    source "$(dirname "$0")/${APP}-lib/colors"
-    source "$(dirname "$0")/${APP}-lib/sync"
+    . "$(dirname "$0")/${APP}-lib/colors"
+    . "$(dirname "$0")/${APP}-lib/sync"
+    . "$(dirname "$0")/${APP}-lib/block"
 else
-    source "$(dirname "$0")/lib/colors"
-    source "$(dirname "$0")/lib/sync"
+    . "$(dirname "$0")/lib/colors"
+    . "$(dirname "$0")/lib/sync"
+    . "$(dirname "$0")/lib/block"
 fi
 
 comsui() {

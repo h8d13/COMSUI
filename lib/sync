@@ -2,15 +2,15 @@
 
 # Import colors from appropriate location
 if [ -f "$(dirname "$0")/${APP}-lib/colors" ]; then
-    source "$(dirname "$0")/${APP}-lib/colors"
+    . "$(dirname "$0")/${APP}-lib/colors"
 else
-    source "$(dirname "$0")/lib/colors"
+    . "$(dirname "$0")/lib/colors"
 fi
 
 BIN_PATH="/.local/bin"
 # Always check custom bin PATH set first. If not exit.
 if ! echo "$PATH" | grep -q "${HOME}${BIN_PATH}"; then
-    die "0: Bin not in path"
+    die "Bin not in path"
 fi
 
 # Only run sync if -t or -f is in arguments
@@ -34,7 +34,6 @@ if [[ "$*" == *"-t"* ]] || [[ "$*" == *"-f"* ]] || [[ "$*" == *"-p"* ]]; then
 
             info "Synced $APP to ~$BIN_PATH"
             shift  # Remove -t from arguments
-            exit 0
             ;;
         "-f")
             cp "${HOME}${BIN_PATH}/${APP}" ./"$APP"

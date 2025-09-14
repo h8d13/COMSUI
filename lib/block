@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Colors are already sourced by main script, no need to import again
+# Block utility - run commands with colored output
+# Do not add die as it should be used for exit errors
+block() {
+    case "$1" in
+        --info) shift; info "$*"; eval "$*" ;;
+        --warn) shift; warn "$*"; eval "$*" ;;
+        --gitop) shift; gitop "$*"; eval "$*" ;;        
+        *) info "$*"; eval "$*" ;;
+    esac
+}
