@@ -11,7 +11,7 @@ or skipped.
 -s > status and exit
 -l > adds last commit and time since
 -c > add "feat: $message" to commit desc
-or auto generated short.
+or auto generated short. This is to be specified directly after the element
 
 standard flow: git add . && git status > confirm > commit/push 
 ```

@@ -14,6 +14,9 @@ else
 fi
 
 comsui() {
+  # Test block utility
+  block --warn "which git || echo 'Git not found'"
+
   # Check for options
   extended_desc=""
   custom_desc=""

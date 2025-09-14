@@ -2,12 +2,21 @@
 
 # Colors are already sourced by main script, no need to import again
 # Block utility - run commands with colored output
-# Do not add die as it should be used for exit errors
 block() {
+    local color_func="info"
     case "$1" in
-        --info) shift; info "$*"; eval "$*" ;;
-        --warn) shift; warn "$*"; eval "$*" ;;
-        --gitop) shift; gitop "$*"; eval "$*" ;;        
-        *) info "$*"; eval "$*" ;;
+        --info) color_func="info"; shift ;;
+        --warn) color_func="warn"; shift ;;
+        --gitop) color_func="gitop"; shift ;;
     esac
+
+    # Show command being executed
+    $color_func "$* ..."
+
+    # Execute command
+    if eval "$*"; then
+        $color_func "Done"
+    else
+        warn "Failed"
+    fi
 }
