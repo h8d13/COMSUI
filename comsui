@@ -26,9 +26,17 @@ comsui() {
         custom_desc="$2"
         shift 2
         ;;
+      -s)
+        git -c advice.statusHints=false status
+        return 0
+        ;;
+      -t|-f)
+        # These are handled by sync script, just consume and continue
+        shift
+        ;;
       *)
         die "Unknown option: $1
-Usage: comsui [-l] [-c \"custom description\"]"
+Usage: comsui [-l] [-c \"custom description\"] [-s] [-t] [-f]"
         ;;
     esac
   done

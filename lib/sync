@@ -13,10 +13,10 @@ if ! echo "$PATH" | grep -q "${HOME}${BIN_PATH}"; then
     die "0: Bin not in path"
 fi
 
-# Only run sync if -s or -p is in arguments
-if [[ "$*" == *"-s"* ]] || [[ "$*" == *"-p"* ]]; then
+# Only run sync if -t or -f is in arguments
+if [[ "$*" == *"-t"* ]] || [[ "$*" == *"-f"* ]]; then
     case "$1" in
-        "-s")
+        "-t")
             # Remove existing app files if they exist
             rm -f "${HOME}${BIN_PATH}/${APP}"
             rm -rf "${HOME}${BIN_PATH}/${APP}-lib"
@@ -32,7 +32,7 @@ if [[ "$*" == *"-s"* ]] || [[ "$*" == *"-p"* ]]; then
             info "Synced $APP to ~$BIN_PATH"
             shift  # Remove -s from arguments
             ;;
-        "-p")
+        "-f")
             cp "${HOME}${BIN_PATH}/${APP}" ./"$APP"
             cp "${HOME}${BIN_PATH}/${APP}-lib/colors" "${HOME}${BIN_PATH}/${APP}-lib/sync" lib/
             info "Pulled $APP from ~$BIN_PATH"
@@ -40,5 +40,5 @@ if [[ "$*" == *"-s"* ]] || [[ "$*" == *"-p"* ]]; then
             ;;
     esac
 else
-    info "skipped"
+    info "Skipped sync"
 fi
