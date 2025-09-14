@@ -3,10 +3,10 @@
 # Import colors from appropriate location
 if [ -f "$(dirname "$0")/${APP}-lib/colors" ]; then
     . "$(dirname "$0")/${APP}-lib/colors"
-    echo "Running from bin installation (using ${APP}-lib)"
+    info "Running from bin installation."
 else
     . "$(dirname "$0")/lib/colors"
-    echo "Running from repository (using lib)"
+    info "Running from repository."
 fi
 
 BIN_PATH="/.local/bin"
