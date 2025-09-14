@@ -55,17 +55,6 @@ Usage: comsui [-l] [-c \"custom description\"]"
   if [[ "$extended_desc" == "true" ]]; then
     last_commit=$(git log -1 --format="%h - %s" 2>/dev/null || echo "No previous commits")
     last_commit_time=$(git log -1 --format="%cr" 2>/dev/null || echo "unknown")
-    # Check if last commit is signed
-    validation=""
-    if [[ -n "$(git log -1 --format="%H" 2>/dev/null)" ]]; then
-      if git log -1 --format="%G?" | grep -q "G"; then
-        validation="✓ signed"
-      elif git log -1 --format="%G?" | grep -q "B"; then
-        validation="✗ bad signature"
-      else
-        validation="○ unsigned"
-      fi
-    fi
   fi
 
   msg="$randid $(date "+%H:%M") #$(printf "%03d" $count)"
@@ -82,10 +71,6 @@ $custom_desc"
     extended_body="
 
 Last commit: $last_commit ($last_commit_time)"
-    if [[ -n "$validation" ]]; then
-      extended_body="Feat:$extended_body
-Validation: $validation"
-    fi
     msg="$msg$extended_body"
   fi
 
