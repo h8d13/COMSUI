@@ -75,7 +75,7 @@ Last commit: $last_commit ($last_commit_time)"
   fi
 
   gitop "git add ."
-  git add .
+  git add . && git -c advice.statusHints=false status
   read -p "Commit and push to origin/master? [y/N] " confirm
   if [[ "$confirm" =~ ^[Yy]$ ]]; then
     gitop "git commit -m \"$msg\""
