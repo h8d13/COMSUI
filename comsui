@@ -41,7 +41,7 @@ comsui() {
         ;;
       *)
         die "Unknown option: $1
-Usage: comsui [-l] [-c \"custom description\"] [-p] [-s] [-t] [-f]"
+Usage: comsui [-t][-l] [-c \"custom description\"] [-p] [-s] [-f]"
         ;;
     esac
   done
