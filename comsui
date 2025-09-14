@@ -15,7 +15,7 @@ fi
 
 comsui() {
   # Test block utility
-  block --warn "which git || echo 'Git not found'"
+  block --die "which git || echo 'Git not found'"
 
   # Check for options
   extended_desc=""
@@ -91,7 +91,7 @@ Last commit: $last_commit ($last_commit_time)"
 
   # Check if there's anything to commit
   if block --quiet "git diff --staged --quiet"; then
-    block --die "No changes to commit"
+    warn "No changes to commit"
     return 0
   fi
 
