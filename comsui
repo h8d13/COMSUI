@@ -51,6 +51,13 @@ Usage: comsui [-t][-l] [-c \"custom description\"] [-p] [-s] [-f]"
     die "Error: Not in a git repository"
   fi
 
+  block --gitop "git add ." && git -c advice.statusHints=false status
+    # Check if there's anything to commit
+  if block --quiet "git diff --staged --quiet"; then
+    warn "No changes to commit"
+    return 0
+  fi
+
   # ID + Date + Count per repository
   randid=$(head /dev/urandom | tr -dc A-Z0-9 | head -c 6)
   today=$(date "+%m-%d")
@@ -87,8 +94,7 @@ Last commit: $last_commit ($last_commit_time)"
     msg="$msg$extended_body"
   fi
 
-  block --gitop "git add ." && git -c advice.statusHints=false status
-  
+
   #block --die "which node && echo 'Node found'"
   #block --die "which npm && npm --version"
   #block --warn "pgrep -f 'your-app-name' || echo 'Process not found'"
@@ -96,12 +102,6 @@ Last commit: $last_commit ($last_commit_time)"
   #block --warn "pgrep -f 'codium' || echo 'No codium processes found'"
   #block --die "pgrep -f 'codium' | xargs -r kill -TERM || echo 'Nothing to kill'
   
-  # Check if there's anything to commit
-  if block --quiet "git diff --staged --quiet"; then
-    warn "No changes to commit"
-    return 0
-  fi
-
   read -p "Commit and push to origin/master? [y/N] " confirm
   if [[ "$confirm" =~ ^[Yy]$ ]]; then
     if block --gitop "git commit -m \"$msg\""; then
