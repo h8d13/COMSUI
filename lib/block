@@ -3,8 +3,11 @@
 # Colors are already sourced by main script, no need to import again
 # Block utility - run commands with colored output
 block() {
+    
     local color_func="info"
+    # defualt if none specified
     local quiet=false
+    # returns only code
 
     case "$1" in
         --info) color_func="info"; shift ;;
