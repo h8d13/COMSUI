@@ -22,7 +22,7 @@ if [[ "$*" == *"-s"* ]] || [[ "$*" == *"-p"* ]]; then
             mkdir -p "$HOME/.local/bin/${APP}-lib"
             cp lib/colors lib/sync "$HOME/.local/bin/${APP}-lib/"
 
-            echo "Synced $APP to ~/.local/bin/ as lib/"
+            echo "Synced $APP to ~/.local/bin/"
             shift  # Remove -s from arguments
             ;;
         "-p")

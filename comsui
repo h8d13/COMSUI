@@ -28,7 +28,7 @@ comsui() {
         ;;
       *)
         echo -e "${RED}Unknown option: $1${NC}"
-        echo -e "${RED}Usage: comsui [-c] [-d \"custom description\"]${NC}"
+        echo -e "${RED}Usage: comsui [-l] [-c \"custom description\"]${NC}"
         return 1
         ;;
     esac
@@ -53,10 +53,21 @@ comsui() {
   # Ensure count is a number
   count=$(($count + 0))
 
-  # Capture changes BEFORE git add if extended description needed
+  # Capture useful info if extended description needed
   if [[ "$extended_desc" == "true" ]]; then
-    files_changed=$(git status --porcelain | wc -l)
-    shortstat=$(git diff HEAD --shortstat 2>/dev/null || echo "Initial commit")
+    last_commit=$(git log -1 --format="%h - %s" 2>/dev/null || echo "No previous commits")
+    last_commit_time=$(git log -1 --format="%cr" 2>/dev/null || echo "unknown")
+    # Check if last commit is signed
+    validation=""
+    if [[ -n "$(git log -1 --format="%H" 2>/dev/null)" ]]; then
+      if git log -1 --format="%G?" | grep -q "G"; then
+        validation="✓ signed"
+      elif git log -1 --format="%G?" | grep -q "B"; then
+        validation="✗ bad signature"
+      else
+        validation="○ unsigned"
+      fi
+    fi
   fi
 
   msg="$randid $(date "+%H:%M") #$(printf "%03d" $count)"
@@ -68,15 +79,15 @@ comsui() {
 $custom_desc"
   fi
 
-  # If -c option, add extended description
+  # If -l option, add extended description
   if [[ "$extended_desc" == "true" ]]; then
     extended_body="
 
-Extended commit details:
-- Files changed: $files_changed
-- Lines added/removed: $shortstat
-- Branch: $(git branch --show-current)
-- Timestamp: $(date)"
+Last commit: $last_commit ($last_commit_time)"
+    if [[ -n "$validation" ]]; then
+      extended_body="$extended_body
+Validation: $validation"
+    fi
     msg="$msg$extended_body"
   fi
 
