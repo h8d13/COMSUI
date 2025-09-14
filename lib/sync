@@ -28,16 +28,16 @@ if [[ "$*" == *"-t"* ]] || [[ "$*" == *"-f"* ]] || [[ "$*" == *"-p"* ]]; then
             cp "$APP" "${HOME}${BIN_PATH}/"
             chmod +x "${HOME}${BIN_PATH}/${APP}"
 
-            # Create app-lib directory
+            # Create app-lib directory and copy all lib files
             mkdir -p "${HOME}${BIN_PATH}/${APP}-lib"
-            cp lib/colors lib/sync "${HOME}${BIN_PATH}/${APP}-lib/"
+            cp lib/* "${HOME}${BIN_PATH}/${APP}-lib/"
 
             info "Synced $APP to ~$BIN_PATH"
             shift  # Remove -t from arguments
             ;;
         "-f")
             cp "${HOME}${BIN_PATH}/${APP}" ./"$APP"
-            cp "${HOME}${BIN_PATH}/${APP}-lib/colors" "${HOME}${BIN_PATH}/${APP}-lib/sync" lib/
+            cp "${HOME}${BIN_PATH}/${APP}-lib/"* lib/
             info "Pulled $APP from ~$BIN_PATH"
             shift  # Remove -p from arguments
             exit 0
