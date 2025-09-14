@@ -23,14 +23,15 @@ block() {
 
     # Record start time (milliseconds)
     local start_time=$(date +%s%3N)
-   # Calculate execution time
-    local end_time=$(date +%s%3N)
-    local duration_ms=$((end_time - start_time))
-    local duration=$(printf "%d.%03d" $((duration_ms / 1000)) $((duration_ms % 1000)))
 
     # Execute command and return exit code
     eval "$*"
     local exit_code=$?
+
+    # Calculate execution time
+    local end_time=$(date +%s%3N)
+    local duration_ms=$((end_time - start_time))
+    local duration=$(printf "%d.%03d" $((duration_ms / 1000)) $((duration_ms % 1000)))
 
     # Show result (unless quiet)
     if [[ "$quiet" != "true" ]]; then
