@@ -63,7 +63,7 @@ Usage: comsui [-l] [-c \"custom description\"]"
   if [[ -n "$custom_desc" ]]; then
     msg="$msg
 
-$custom_desc"
+feat: $custom_desc"
   fi
 
   # If -l option, add extended description
