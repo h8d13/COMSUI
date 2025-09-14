@@ -28,7 +28,7 @@ comsui() {
   today=$(date "+%m-%d")
   count_file="/tmp/commit_count_$today"
   if [ ! -f "$count_file" ]; then
-    echo "1" > "$count_file"
+    echo "0" > "$count_file"
     chmod 644 "$count_file"
   fi
   count=$(cat "$count_file" 2>/dev/null || echo "0")
@@ -56,7 +56,7 @@ Extended commit details:
     msg="$msg$extended_body"
   fi
 
-  echo "Commit suicide message: \"$msg\""
+  echo "Comsui message: \"$msg\""
   git add .
   read -p "Commit and push to origin/master? [y/N] " confirm
   if [[ "$confirm" =~ ^[Yy]$ ]]; then
