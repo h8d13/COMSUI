@@ -1,3 +1,5 @@
+#!/bin/bash
+
 comsui() {
   # Check for options
   extended_desc=""
@@ -30,8 +32,8 @@ comsui() {
   # ID + Date + Count per repository
   randid=$(head /dev/urandom | tr -dc A-Z0-9 | head -c 6)
   today=$(date "+%m-%d")
-  git_dir=$(git rev-parse --git-dir)
-  count_file="$git_dir/comsui_count_$today"
+  repo_name=$(basename "$(git rev-parse --show-toplevel)")
+  count_file="/tmp/comsui_${repo_name}_$today"
 
   if [ ! -f "$count_file" ]; then
     echo "0" > "$count_file"
@@ -83,3 +85,4 @@ Extended commit details:
     echo "Aborted."
   fi
 }
+
