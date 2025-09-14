@@ -91,7 +91,7 @@ Last commit: $last_commit ($last_commit_time)"
 
   # Check if there's anything to commit
   if block --quiet "git diff --staged --quiet"; then
-    warn "No changes to commit"
+    block --die "No changes to commit"
     return 0
   fi
 
