@@ -30,7 +30,7 @@ comsui() {
         git -c advice.statusHints=false status
         return 0
         ;;
-      -t|-f)
+      -t|-f|-p)
         # These are handled by sync script, just consume and continue
         shift
         ;;

@@ -14,8 +14,11 @@ if ! echo "$PATH" | grep -q "${HOME}${BIN_PATH}"; then
 fi
 
 # Only run sync if -t or -f is in arguments
-if [[ "$*" == *"-t"* ]] || [[ "$*" == *"-f"* ]]; then
+if [[ "$*" == *"-t"* ]] || [[ "$*" == *"-f"* ]] || [[ "$*" == *"-p"* ]]; then
     case "$1" in
+        "-p")
+            echo $PATH && exit
+            ;;
         "-t")
             # Remove existing app files if they exist
             rm -f "${HOME}${BIN_PATH}/${APP}"
