@@ -94,7 +94,6 @@ Last commit: $last_commit ($last_commit_time)"
     msg="$msg$extended_body"
   fi
 
-
   #block --die "which node && echo 'Node found'"
   #block --die "which npm && npm --version"
   #block --warn "pgrep -f 'your-app-name' || echo 'Process not found'"
