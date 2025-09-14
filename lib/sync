@@ -33,13 +33,13 @@ if [[ "$*" == *"-t"* ]] || [[ "$*" == *"-f"* ]] || [[ "$*" == *"-p"* ]]; then
             cp lib/* "${HOME}${BIN_PATH}/${APP:-comsui}-lib/"
 
             info "Synced $APP to ~$BIN_PATH"
-            shift  # Remove -t from arguments
+            shift
             ;;
         "-f")
             cp "${HOME}${BIN_PATH}/${APP}" ./"$APP"
             cp "${HOME}${BIN_PATH}/${APP}-lib/"* lib/
             info "Pulled $APP from ~$BIN_PATH"
-            shift  # Remove -p from arguments
+            shift  
             exit 0
             ;;
     esac
