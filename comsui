@@ -86,3 +86,4 @@ Extended commit details:
   fi
 }
 
+comsui "$@"
