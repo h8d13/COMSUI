@@ -5,7 +5,7 @@
 block() {
     
     local color_func="info"
-    # defualt if none specified
+    # default if none specified
     local quiet=false
     # returns only code
 
