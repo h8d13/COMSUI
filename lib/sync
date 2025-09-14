@@ -25,12 +25,12 @@ if [[ "$*" == *"-t"* ]] || [[ "$*" == *"-f"* ]] || [[ "$*" == *"-p"* ]]; then
             rm -rf "${HOME}${BIN_PATH}/${APP}-lib"
 
             # Copy executable directly to bin
-            cp "$APP" "${HOME}${BIN_PATH}/"
-            chmod +x "${HOME}${BIN_PATH}/${APP}"
+            cp "${APP:-comsui}" "${HOME}${BIN_PATH}/"
+            chmod +x "${HOME}${BIN_PATH}/${APP:-comsui}"
 
             # Create app-lib directory and copy all lib files
-            mkdir -p "${HOME}${BIN_PATH}/${APP}-lib"
-            cp lib/* "${HOME}${BIN_PATH}/${APP}-lib/"
+            mkdir -p "${HOME}${BIN_PATH}/${APP:-comsui}-lib"
+            cp lib/* "${HOME}${BIN_PATH}/${APP:-comsui}-lib/"
 
             info "Synced $APP to ~$BIN_PATH"
             shift  # Remove -t from arguments
