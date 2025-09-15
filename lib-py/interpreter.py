@@ -10,7 +10,6 @@ from ast_nodes import (
 )
 from bash_bridge import BashBridge
 
-
 class Interpreter:
     def __init__(self, comsui_dir: str):
         self.bash_bridge = BashBridge(comsui_dir)
@@ -310,7 +309,6 @@ class Interpreter:
                 for match in re.finditer(cmd_pattern, value_str):
                     cmd = match.group(1)
                     # Create a clean command substitution
-                    from .ast_nodes import CommandSubstitution
                     cmd_result = self.evaluate_command_substitution(CommandSubstitution(cmd))
                     value_str = value_str.replace(match.group(0), cmd_result)
 
