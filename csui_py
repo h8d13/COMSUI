@@ -89,7 +89,11 @@ Examples:
     parser.add_argument('--transpile', action='store_true',
                        help='Transpile to bash and print (don\'t execute)')
 
-    args = parser.parse_args()
+    args, remaining_args = parser.parse_known_args()
+
+    # Add remaining args back to sys.argv for the script to process
+    if remaining_args:
+        sys.argv = sys.argv[:2] + remaining_args
 
     comsui_dir = os.path.dirname(os.path.abspath(__file__))
 

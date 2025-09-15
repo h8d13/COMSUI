@@ -15,6 +15,7 @@ class TokenType(Enum):
     # Keywords
     BLOCK = auto()
     ATOM = auto()
+    OPTS = auto()
     IF = auto()
     THEN = auto()
     ELSE = auto()

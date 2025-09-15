@@ -59,3 +59,9 @@ class Identifier(ASTNode):
 class VariableAssignment(ASTNode):
     name: str
     value: ASTNode
+
+
+@dataclass
+class OptsStatement(ASTNode):
+    option_specs: List[str]  # e.g., ["l:extended_desc", "c:custom_desc:"]
+    body: List[ASTNode]

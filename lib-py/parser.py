@@ -6,7 +6,7 @@ from typing import List, Optional
 from token_types import Token, TokenType
 from ast_nodes import (
     ASTNode, Program, BlockStatement, AtomStatement, FunctionCall,
-    IfStatement, CommandSubstitution, StringLiteral, Identifier, VariableAssignment
+    IfStatement, CommandSubstitution, StringLiteral, Identifier, VariableAssignment, OptsStatement
 )
 
 
@@ -65,6 +65,8 @@ class Parser:
             return self.parse_block_statement()
         elif self.match(TokenType.ATOM):
             return self.parse_atom_statement()
+        elif self.match(TokenType.OPTS):
+            return self.parse_opts_statement()
         elif self.match(TokenType.IF):
             return self.parse_if_statement()
         elif self.match(TokenType.IDENTIFIER):
@@ -102,6 +104,33 @@ class Parser:
         command = self.parse_expression()
 
         return AtomStatement(description, command)
+
+    def parse_opts_statement(self) -> OptsStatement:
+        self.consume(TokenType.OPTS)
+
+        option_specs = []
+        # Parse option specifications (strings like "l:extended_desc")
+        while self.match(TokenType.STRING):
+            option_specs.append(self.current_token().value)
+            self.advance()
+
+        # Parse the body block
+        self.skip_newlines()
+        self.consume(TokenType.LBRACE)
+        self.skip_newlines()
+
+        body = []
+        while not self.match(TokenType.RBRACE, TokenType.EOF):
+            self.skip_newlines()
+            if self.match(TokenType.RBRACE):
+                break
+            stmt = self.parse_statement()
+            if stmt:
+                body.append(stmt)
+
+        self.consume(TokenType.RBRACE)
+
+        return OptsStatement(option_specs, body)
 
     def parse_if_statement(self) -> IfStatement:
         self.consume(TokenType.IF)

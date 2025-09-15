@@ -116,8 +116,8 @@ class Lexer:
         return ""
 
     def tokenize(self) -> List[Token]:
-        keywords = {'block': TokenType.BLOCK, 'atom': TokenType.ATOM, 'if': TokenType.IF,
-                   'then': TokenType.THEN, 'else': TokenType.ELSE, 'fi': TokenType.FI}
+        keywords = {'block': TokenType.BLOCK, 'atom': TokenType.ATOM, 'opts': TokenType.OPTS,
+                   'if': TokenType.IF, 'then': TokenType.THEN, 'else': TokenType.ELSE, 'fi': TokenType.FI}
 
         while self.current_char():
             start_line, start_column = self.line, self.column

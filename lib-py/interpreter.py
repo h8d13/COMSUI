@@ -6,7 +6,7 @@ import sys
 from typing import Any
 from ast_nodes import (
     ASTNode, Program, BlockStatement, AtomStatement, FunctionCall,
-    IfStatement, CommandSubstitution, StringLiteral, Identifier, VariableAssignment
+    IfStatement, CommandSubstitution, StringLiteral, Identifier, VariableAssignment, OptsStatement
 )
 from bash_bridge import BashBridge
 
@@ -95,6 +95,32 @@ class Interpreter:
 
         return '\n'.join(stdout_lines), '\n'.join(stderr_lines), return_code
 
+    def _expand_variables(self, text: str) -> str:
+        """Expand variables and command substitutions in text"""
+        import re
+
+        # First expand variables like $varname and ${varname}
+        def replace_var(match):
+            var_name = match.group(1) or match.group(2)  # Handle both $var and ${var}
+            return str(self.variables.get(var_name, f"${var_name}"))
+
+        # Handle $varname and ${varname}
+        text = re.sub(r'\$\{([^}]+)\}|\$([A-Za-z_][A-Za-z0-9_]*)', replace_var, text)
+
+        # Handle command substitutions like $(command)
+        def replace_cmd(match):
+            cmd = match.group(1)
+            try:
+                stdout, stderr, return_code = self._execute_in_session(cmd)
+                return stdout.strip()
+            except Exception as e:
+                self.debug_print(f"Command substitution error: {e}")
+                return f"$({cmd})"
+
+        text = re.sub(r'\$\(([^)]+)\)', replace_cmd, text)
+
+        return text
+
     def evaluate(self, node: ASTNode) -> Any:
         """Main evaluation dispatcher"""
         self.debug_print(f"Evaluating {type(node).__name__}")
@@ -105,6 +131,8 @@ class Interpreter:
             return self.evaluate_block_statement(node)
         elif isinstance(node, AtomStatement):
             return self.evaluate_atom_statement(node)
+        elif isinstance(node, OptsStatement):
+            return self.evaluate_opts_statement(node)
         elif isinstance(node, FunctionCall):
             return self.evaluate_function_call(node)
         elif isinstance(node, IfStatement):
@@ -114,10 +142,12 @@ class Interpreter:
         elif isinstance(node, VariableAssignment):
             return self.evaluate_variable_assignment(node)
         elif isinstance(node, StringLiteral):
-            return node.value
+            return self._expand_variables(node.value)
         elif isinstance(node, Identifier):
             # Check if it's a variable first, then treat as literal
-            return self.variables.get(node.name, node.name)
+            value = self.variables.get(node.name, node.name)
+            # Handle variable expansion within the value
+            return self._expand_variables(str(value))
         else:
             self.debug_print(f"Unknown node type: {type(node)}")
             return None
@@ -190,6 +220,95 @@ class Interpreter:
 
         return False
 
+    def evaluate_opts_statement(self, opts: OptsStatement) -> Any:
+        """Parse command line options and execute body with variables set"""
+        self.debug_print(f"Opts statement with specs: {opts.option_specs}")
+
+        # Parse option specifications: "flag:varname" or "flag:varname:default"
+        option_map = {}
+        defaults = {}
+
+        for spec in opts.option_specs:
+            parts = spec.split(":")
+            if len(parts) >= 2:
+                flag = parts[0]
+                varname = parts[1]
+                default = parts[2] if len(parts) > 2 else ""
+                option_map[flag] = varname
+                if default:
+                    defaults[varname] = default
+
+        # Get command line arguments from bash $@
+        import sys
+        # Skip the script interpreter and script name to get actual args
+        args = []
+        if len(sys.argv) > 2:  # csui_py script.csui [args...]
+            args = sys.argv[2:]
+
+        # Parse command line arguments
+        parsed_vars = {}
+        i = 0
+        while i < len(args):
+            arg = args[i]
+            if arg.startswith('-') and not arg.startswith('--'):
+                # Single flag like -l or -c
+                flag = arg[1:]  # Remove the -
+                if flag in option_map:
+                    varname = option_map[flag]
+                    # Check if this flag expects a value
+                    if i + 1 < len(args) and not args[i + 1].startswith('-'):
+                        # Next arg is a value
+                        parsed_vars[varname] = args[i + 1]
+                        i += 2
+                    else:
+                        # Boolean flag
+                        parsed_vars[varname] = "true"
+                        i += 1
+                else:
+                    # Unknown flag - handle gracefully
+                    self.debug_print(f"Unknown flag: {arg}")
+                    available_flags = ", ".join(f"-{flag}" for flag in option_map.keys())
+                    print(f"Unknown option: {arg}", file=sys.stderr)
+                    print(f"Available options: {available_flags}", file=sys.stderr)
+                    return False
+            else:
+                # Non-flag argument, skip for now
+                i += 1
+
+        # Set defaults for unspecified options
+        for varname, default_val in defaults.items():
+            if varname not in parsed_vars:
+                parsed_vars[varname] = default_val
+
+        # Store old variable values for restoration
+        old_vars = {}
+        for varname in parsed_vars:
+            if varname in self.variables:
+                old_vars[varname] = self.variables[varname]
+
+        # Set new variables
+        for varname, value in parsed_vars.items():
+            self.variables[varname] = value
+            self.debug_print(f"Set option variable: {varname} = {value}")
+
+        # Execute the body
+        result = None
+        try:
+            for stmt in opts.body:
+                result = self.evaluate(stmt)
+                # Handle early returns/exits
+                if hasattr(self, '_should_exit') and self._should_exit:
+                    break
+        finally:
+            # Restore old variable values
+            for varname in parsed_vars:
+                if varname in old_vars:
+                    self.variables[varname] = old_vars[varname]
+                else:
+                    del self.variables[varname]
+
+        return result
+
     def evaluate_function_call(self, func_call: FunctionCall) -> Any:
         """Execute function call through bash bridge"""
         self.debug_print(f"Function call: {func_call.name}({func_call.args})")
@@ -200,15 +319,16 @@ class Interpreter:
         # Process arguments with variable substitution
         for arg in func_call.args:
             arg_value = str(self.evaluate(arg))
-            # Expand variables in the argument
-            for var_name, var_value in self.variables.items():
-                arg_value = arg_value.replace(f"${var_name}", str(var_value))
             args.append(arg_value)
 
         self.debug_print(f"Executing: {func_name} {args}")
 
-        # Special handling for interactive functions
-        if func_name == 'u_confirm':
+        # Special handling for interactive functions and control flow
+        if func_name == 'return':
+            exit_code = int(args[0]) if args else 0
+            self._should_exit = True
+            sys.exit(exit_code)
+        elif func_name == 'u_confirm':
             prompt = args[0] if args else "Continue?"
             try:
                 response = input(f"{prompt} [y/N] ")
