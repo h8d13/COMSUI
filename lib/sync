@@ -10,14 +10,6 @@ fi
 if ! s_inpath "${HOME}${BIN_PATH}"; then
     die "Bin not in path"
 fi
-# Import libraries and show location info
-if [ -f "$(dirname "$0")/${APP}-lib/struc" ]; then
-    . "$(dirname "$0")/${APP}-lib/struc"
-    info "Running from bin installation."
-else
-    . "$(dirname "$0")/lib/struc"
-    info "Running from repository."
-fi
 
 # Only run sync if argument matches
 case "$*" in
