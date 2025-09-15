@@ -38,7 +38,7 @@ Explore `/lib` to see all available
 
 **Git**: `g_check`, `g_status`, `g_add`, `g_branch`, `g_remote`, `g_upstream`
 
-**Blocks/Atoms**: AH
+**Blocks/Atoms**:
 ```
 block --info|--warn|--gitop|--die|--quiet "command" 
 atom "description" "command"

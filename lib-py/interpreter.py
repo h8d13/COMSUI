@@ -70,8 +70,9 @@ class Interpreter:
         # Create unique marker for command completion
         marker = f"CMD_COMPLETE_{hash(command) % 10000}"
 
-        # Execute command and echo marker
-        full_command = f'{command}\necho "{marker}:$?"\n'
+        # Execute command, capture output to variable, then echo both output and marker
+        # This ensures commands that don't output newlines are properly captured
+        full_command = f'__output=$({command}); echo -n "$__output"; echo; echo "{marker}:$?"\n'
 
         self._bash_session.stdin.write(full_command)
         self._bash_session.stdin.flush()
@@ -115,6 +116,7 @@ class Interpreter:
             # First expand variables within the command
             expanded_cmd = self._expand_variables_only(cmd)
             self.debug_print(f"Executing command substitution: {cmd} -> {expanded_cmd}")
+
             try:
                 stdout, stderr, return_code = self._execute_in_session(expanded_cmd)
                 result = stdout.strip()
@@ -376,25 +378,7 @@ class Interpreter:
         self.debug_print(f"Executing: {func_name} {args}")
 
         # Special handling for interactive functions and control flow
-        if func_name == 's_random':
-            # Temporary workaround for s_random function
-            length = int(args[0]) if args else 6
-            charset = args[1] if len(args) > 1 else "A-Z0-9a-z"
-            import random
-            import string
-
-            # Convert charset notation to actual characters
-            if charset == "A-Z0-9":
-                chars = string.ascii_uppercase + string.digits
-            elif charset == "A-Za-z0-9":
-                chars = string.ascii_letters + string.digits
-            else:
-                chars = charset
-
-            result = ''.join(random.choice(chars) for _ in range(length))
-            self.debug_print(f"Generated random string: {result}")
-            return result
-        elif func_name == 'return':
+        if func_name == 'return':
             exit_code = int(args[0]) if args else 0
             self._should_exit = True
             sys.exit(exit_code)
