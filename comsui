@@ -41,6 +41,9 @@ comsui() {
   if ! g_check; then
     die "Error: Not in a git repository"
   fi
+
+  # Store the current working directory (where script was invoked)
+  original_dir=$(pwd)
   
   # Check if there's anything to commit
   if git diff --quiet && git diff --staged --quiet; then
@@ -48,7 +51,7 @@ comsui() {
     exit 0
   fi
 
-  git diff && block --gitop "g_add"
+  git diff && block --gitop "git add -A"
   
 
   if f_no "$count_f"; then
