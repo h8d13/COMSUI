@@ -96,7 +96,7 @@ Last commit: $last_commit ($last_commit_time)"
  
   #block --warn "pgrep -f 'codium' || echo 'No codium processes found'"
   #block --die "pgrep -f 'codium' | xargs -r kill -TERM || echo 'Nothing to kill'
-  
+  atom "Prompting for sudo password" "sudo -v"
   if u_confirm "Commit and push to origin/master?"; then
     if block --gitop "git commit -m \"$msg\""; then
       if block --gitop "git push origin master"; then
