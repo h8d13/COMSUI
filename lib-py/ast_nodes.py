@@ -65,3 +65,10 @@ class VariableAssignment(ASTNode):
 class OptsStatement(ASTNode):
     option_specs: List[str]  # e.g., ["l:extended_desc", "c:custom_desc:"]
     body: List[ASTNode]
+
+
+@dataclass
+class CompoundStatement(ASTNode):
+    left: ASTNode
+    operator: str  # "&&" or "||"
+    right: ASTNode

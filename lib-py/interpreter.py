@@ -6,7 +6,7 @@ import sys
 from typing import Any
 from ast_nodes import (
     ASTNode, Program, BlockStatement, AtomStatement, FunctionCall,
-    IfStatement, CommandSubstitution, StringLiteral, Identifier, VariableAssignment, OptsStatement
+    IfStatement, CommandSubstitution, StringLiteral, Identifier, VariableAssignment, OptsStatement, CompoundStatement
 )
 from bash_bridge import BashBridge
 
@@ -42,11 +42,9 @@ class Interpreter:
             bufsize=0
         )
 
-        # Load COMSUI libraries
+        # Load COMSUI libraries using the same approach as bash_bridge
         init_script = f'''
-        . "{self.bash_bridge.lib_path}/utils" 2>/dev/null
-        . "{self.bash_bridge.lib_path}/colors" 2>/dev/null
-        . "{self.bash_bridge.lib_path}/block" 2>/dev/null
+        . "{self.bash_bridge.lib_path}/struct" 2>/dev/null
         export COMSUI_DIR="{self.comsui_dir}"
         echo "COMSUI_READY"
         '''
@@ -116,7 +114,7 @@ class Interpreter:
             try:
                 stdout, stderr, return_code = self._execute_in_session(expanded_cmd)
                 result = stdout.strip()
-                self.debug_print(f"Command substitution result: '{result}'")
+                self.debug_print(f"Command substitution result: '{result}' (stderr: '{stderr}', rc: {return_code})")
                 return result
             except Exception as e:
                 self.debug_print(f"Command substitution error: {e}")
@@ -153,6 +151,8 @@ class Interpreter:
             return self.evaluate_atom_statement(node)
         elif isinstance(node, OptsStatement):
             return self.evaluate_opts_statement(node)
+        elif isinstance(node, CompoundStatement):
+            return self.evaluate_compound_statement(node)
         elif isinstance(node, FunctionCall):
             return self.evaluate_function_call(node)
         elif isinstance(node, IfStatement):
@@ -330,6 +330,32 @@ class Interpreter:
                     del self.variables[varname]
 
         return result
+
+    def evaluate_compound_statement(self, compound: CompoundStatement) -> Any:
+        """Execute compound statement with && or || operators"""
+        self.debug_print(f"Compound statement: {compound.operator}")
+
+        left_result = self.evaluate(compound.left)
+
+        # Convert result to boolean
+        left_success = bool(left_result) if isinstance(left_result, (bool, int)) else left_result == 0
+
+        if compound.operator == "&&":
+            # For &&, only execute right if left succeeded
+            if left_success:
+                right_result = self.evaluate(compound.right)
+                return right_result
+            else:
+                return left_result
+        elif compound.operator == "||":
+            # For ||, only execute right if left failed
+            if not left_success:
+                right_result = self.evaluate(compound.right)
+                return right_result
+            else:
+                return left_result
+
+        return left_result
 
     def evaluate_function_call(self, func_call: FunctionCall) -> Any:
         """Execute function call through bash bridge"""

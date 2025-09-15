@@ -6,7 +6,7 @@ from typing import List, Optional
 from token_types import Token, TokenType
 from ast_nodes import (
     ASTNode, Program, BlockStatement, AtomStatement, FunctionCall,
-    IfStatement, CommandSubstitution, StringLiteral, Identifier, VariableAssignment, OptsStatement
+    IfStatement, CommandSubstitution, StringLiteral, Identifier, VariableAssignment, OptsStatement, CompoundStatement
 )
 
 
@@ -61,6 +61,19 @@ class Parser:
         return Program(statements)
 
     def parse_statement(self) -> Optional[ASTNode]:
+        # Parse the basic statement first
+        stmt = self.parse_basic_statement()
+
+        # Check for compound operators (&& or ||)
+        if self.match(TokenType.AND, TokenType.OR):
+            operator = self.current_token().value
+            self.advance()
+            right = self.parse_statement()  # Recursively parse the right side
+            return CompoundStatement(stmt, operator, right)
+
+        return stmt
+
+    def parse_basic_statement(self) -> Optional[ASTNode]:
         if self.match(TokenType.BLOCK):
             return self.parse_block_statement()
         elif self.match(TokenType.ATOM):
@@ -184,7 +197,8 @@ class Parser:
 
         args = []
         while (not self.match(TokenType.NEWLINE, TokenType.SEMICOLON, TokenType.EOF) and
-               not self.match(TokenType.THEN, TokenType.ELSE, TokenType.FI)):
+               not self.match(TokenType.THEN, TokenType.ELSE, TokenType.FI) and
+               not self.match(TokenType.AND, TokenType.OR)):
             arg = self.parse_expression()
             if arg:
                 args.append(arg)
