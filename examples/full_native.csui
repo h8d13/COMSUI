@@ -1,17 +1,27 @@
-# COMSUI written in COMSUI language - the ultimate test!
+# COMSUI written in COMSUI language
 # This matches the actual bash comsui functionality exactly
+# Parse command line options using custom opts constructor
 
-# Parse command line options using our custom opts constructor
-opts "l:extended_desc" "c:custom_desc:" "s:status_only" "t:sync_test" "f:force" "p:push" "d:debug" {
+opts "l:extended_desc" "c:custom_desc:" "s:status_only" "t:sync_to_bin" "f:sync_from_bin" "p:show_path" "d:delete_from_bin" {
     # Handle status-only mode immediately
     if s_set "$status_only"; then
         block "git -c advice.statusHints=false status"
         return 0
     fi
 
-    # Convert sync flags for compatibility - simplified for now
-    if s_set "$sync_test"; then
-        info "Sync test flag detected"
+    # Sync flags are bash-specific (for ~/.local/bin installation)
+    # Python version ignores these as it's a development tool
+    if s_set "$sync_to_bin"; then
+        info "Note: -t (sync to ~/.local/bin) only works with bash version ./comsui"
+    fi
+    if s_set "$sync_from_bin"; then
+        info "Note: -f (sync from ~/.local/bin) only works with bash version ./comsui"
+    fi
+    if s_set "$show_path"; then
+        info "Note: -p (show PATH) only works with bash version ./comsui"
+    fi
+    if s_set "$delete_from_bin"; then
+        info "Note: -d (delete from ~/.local/bin) only works with bash version ./comsui"
     fi
 }
 
@@ -63,7 +73,7 @@ if s_true "$extended_desc"; then
 fi
 
 # Example r_upgrade usage:
-#r_upgrade "user"     # Ensures running as regular user
+r_upgrade "user"     # Ensures running as regular user
 #r_upgrade "clear"    # Clears sudo cache for security and reprompts
 #r_upgrade "admin" sh -c 'echo $(whoami)'  # Ensures sudo available for admin tasks adn wraps command with sudo
 atom "Disk space check" "df -h | grep '/home'"
