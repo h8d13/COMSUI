@@ -110,9 +110,14 @@ class Interpreter:
         # Handle command substitutions like $(command)
         def replace_cmd(match):
             cmd = match.group(1)
+            # First expand variables within the command
+            expanded_cmd = self._expand_variables_only(cmd)
+            self.debug_print(f"Executing command substitution: {cmd} -> {expanded_cmd}")
             try:
-                stdout, stderr, return_code = self._execute_in_session(cmd)
-                return stdout.strip()
+                stdout, stderr, return_code = self._execute_in_session(expanded_cmd)
+                result = stdout.strip()
+                self.debug_print(f"Command substitution result: '{result}'")
+                return result
             except Exception as e:
                 self.debug_print(f"Command substitution error: {e}")
                 return f"$({cmd})"
@@ -122,6 +127,18 @@ class Interpreter:
         # Handle escape sequences
         text = text.replace('\\n', '\n').replace('\\t', '\t')
 
+        return text
+
+    def _expand_variables_only(self, text: str) -> str:
+        """Expand only variables, not command substitutions (to avoid recursion)"""
+        import re
+
+        def replace_var(match):
+            var_name = match.group(1) or match.group(2)  # Handle both $var and ${var}
+            return str(self.variables.get(var_name, f"${var_name}"))
+
+        # Handle $varname and ${varname} only
+        text = re.sub(r'\$\{([^}]+)\}|\$([A-Za-z_][A-Za-z0-9_]*)', replace_var, text)
         return text
 
     def evaluate(self, node: ASTNode) -> Any:
