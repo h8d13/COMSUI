@@ -35,7 +35,7 @@ comsui -f -l -c "finished live coding for today"
 ## Core Functions
 
 Explore `/lib` to see all available
-
+WOWOOW
 **Git**: `g_check`, `g_status`, `g_add`, `g_branch`, `g_remote`, `g_upstream`
 
 **Blocks/Atoms**:
