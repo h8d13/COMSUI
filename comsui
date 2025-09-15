@@ -42,15 +42,16 @@ comsui() {
     die "Error: Not in a git repository"
   fi
 
-  # always add from . first
-  block --gitop "g_add"
-    # Check if there's anything to commit
-  block --gitop "git diff"
+  # always add from root level . first
+  block --gitop "g_add" && g_status # to show info
+  
+  # Check if there's anything to commit
   if block --quiet "g_staged"; then
     warn "No changes detected"
+    exit 1
   fi
 
-  g_status # to show info
+  
 
   if f_no "$count_f"; then
     echo "0" > "$count_f"
