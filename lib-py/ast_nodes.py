@@ -53,3 +53,9 @@ class StringLiteral(ASTNode):
 @dataclass
 class Identifier(ASTNode):
     name: str
+
+
+@dataclass
+class VariableAssignment(ASTNode):
+    name: str
+    value: ASTNode

@@ -6,7 +6,7 @@ from typing import List, Optional
 from token_types import Token, TokenType
 from ast_nodes import (
     ASTNode, Program, BlockStatement, AtomStatement, FunctionCall,
-    IfStatement, CommandSubstitution, StringLiteral, Identifier
+    IfStatement, CommandSubstitution, StringLiteral, Identifier, VariableAssignment
 )
 
 
@@ -68,7 +68,11 @@ class Parser:
         elif self.match(TokenType.IF):
             return self.parse_if_statement()
         elif self.match(TokenType.IDENTIFIER):
-            return self.parse_function_call()
+            # Check if this is a variable assignment
+            if self.peek_token().type == TokenType.EQUALS:
+                return self.parse_variable_assignment()
+            else:
+                return self.parse_function_call()
         else:
             # Skip unknown tokens
             self.advance()
@@ -159,6 +163,18 @@ class Parser:
                 break
 
         return FunctionCall(name, args)
+
+    def parse_variable_assignment(self) -> VariableAssignment:
+        name = self.current_token().value
+        self.advance()  # consume identifier
+        self.consume(TokenType.EQUALS)  # consume =
+
+        # Parse the value (can be command substitution, string, or identifier)
+        value = self.parse_expression()
+        if not value:
+            value = StringLiteral("")
+
+        return VariableAssignment(name, value)
 
     def parse_expression(self) -> Optional[ASTNode]:
         if self.match(TokenType.STRING):

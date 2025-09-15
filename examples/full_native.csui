@@ -1,12 +1,12 @@
 # COMSUI written in COMSUI language - the ultimate test!
-# This replaces the bash version with native COMSUI syntax
+# This matches the actual bash comsui functionality exactly
 
 # Prerequisites check
 block --die "which git || echo 'Git not found'"
 
-# Repository validation
+# Check if we're in a git repository
 if g_check; then
-    info "Repository found"
+    info "In git repository"
 else
     die "Error: Not in a git repository"
 fi
@@ -16,26 +16,41 @@ block --gitop "g_add"
 g_status
 
 # Check if there's anything to commit
-if g_staged; then
+if block --quiet "g_staged"; then
     warn "No changes to commit"
 else
-    # Generate commit message components
-    info "Preparing commit message"
+    # ID + Date + Count per repository - exactly like bash version
+    randid=$(s_random 6 A-Z0-9)
+    today=$(t_date)
+    repo_name=$(g_repo)
+    user_id=$(id -u)
 
-    # Confirm and commit
-    if u_confirm "Commit and push to upstream?"; then
-        # Create commit message (simplified for demo)
-        block --gitop "git commit -m 'COMSUI auto commit'"
+    # Commit counting logic
+    count_f="/tmp/comsui_${repo_name}_${today}_${user_id}"
 
-        # Push to upstream
-        if block --gitop "git push $(g_remote) $(g_branch)"; then
-            info "Successfully pushed to remote"
+    if f_no "$count_f"; then
+        echo "0" > "$count_f"
+    fi
+
+    count=$(f_read "$count_f" "0")
+    count=$(n_safe "$count")
+
+    # Generate message exactly like bash version
+    msg="$randid $(date '+%H:%M') #$(n_pad $count)"
+
+    if u_confirm "Commit and push to $(g_upstream)?"; then
+        if block --gitop "git commit -m \"$msg\""; then
+            if block --gitop "git push $(g_remote) $(g_branch)"; then
+                count=$((count + 1))
+                echo "$count" > "$count_f"
+                info "Count incremented to $count"
+            else
+                die "Git push failed, count not incremented."
+            fi
         else
-            die "Git push failed"
+            die "Git commit failed, count not incremented."
         fi
     else
-        info "Commit aborted by user"
+        info "Aborted."
     fi
 fi
-
-info "COMSUI workflow completed!"

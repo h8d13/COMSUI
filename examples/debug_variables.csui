@@ -1,0 +1,11 @@
+# Debug variable building
+randid=$(s_random 6 A-Z0-9)
+today=$(t_date)
+repo_name=$(g_repo)
+
+info "randid: $randid"
+info "today: $today"
+info "repo_name: $repo_name"
+
+msg="$randid $(date '+%H:%M') #001"
+info "msg: $msg"

@@ -55,6 +55,9 @@ def transpile_to_bash(ast: Program) -> str:
             result += "; fi"
             return result
 
+        elif isinstance(node, VariableAssignment):
+            val = node_to_bash(node.value)
+            return f"{node.name}={val}"
         elif isinstance(node, StringLiteral):
             return f'"{node.value}"'
         elif isinstance(node, Identifier):

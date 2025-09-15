@@ -188,6 +188,11 @@ class Lexer:
                 self.advance()
                 continue
 
+            if char == '=':
+                self.tokens.append(Token(TokenType.EQUALS, '=', start_line, start_column))
+                self.advance()
+                continue
+
             if char == '(':
                 self.tokens.append(Token(TokenType.LPAREN, '(', start_line, start_column))
                 self.advance()

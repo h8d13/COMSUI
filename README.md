@@ -13,10 +13,9 @@ COMSUI is a domain-specific language for system operations and automation, with 
 
 ```bash
 # Bash runtime (fast)
-./comsui
+./comsui *args
 
 # Python interpreter (debuggable)
-./comsui_py examples/full_native.csui
 ./comsui_py --debug examples/simple_test.csui
 ./comsui_py --transpile examples/full_native.csui
 ```

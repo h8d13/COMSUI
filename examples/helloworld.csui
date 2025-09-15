@@ -1,3 +1,0 @@
-# Simple test script
-info "Starting test"
-block --info "echo 'Hello from COMSUI'"

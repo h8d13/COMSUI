@@ -30,6 +30,7 @@ class TokenType(Enum):
     AND = auto()
     OR = auto()
     SEMICOLON = auto()
+    EQUALS = auto()  # = for variable assignment
 
     # Punctuation
     LPAREN = auto()
