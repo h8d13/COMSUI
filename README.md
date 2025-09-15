@@ -98,3 +98,4 @@ fi
 ./csui_py --transpile examples/simple_test.csui # Convert to bash
 ```
 # still no tincremting
+debug write
