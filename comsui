@@ -2,22 +2,11 @@
 # App configuration
 APP=${APP:-comsui}
 
-# Load utils first
-if [ -f "$(dirname "$0")/${APP}-lib/utils" ]; then
-    . "$(dirname "$0")/${APP}-lib/utils"
+# Import all libraries
+if [ -f "$(dirname "$0")/${APP}-lib/struct" ]; then
+    . "$(dirname "$0")/${APP}-lib/struct"
 else
-    . "$(dirname "$0")/lib/utils"
-fi
-
-# . colors from appropriate locations
-if f_ex "$(dirname "$0")/${APP}-lib/colors"; then
-    . "$(dirname "$0")/${APP}-lib/colors"
-    . "$(dirname "$0")/${APP}-lib/sync"
-    . "$(dirname "$0")/${APP}-lib/block"
-else
-    . "$(dirname "$0")/lib/colors"
-    . "$(dirname "$0")/lib/sync"
-    . "$(dirname "$0")/lib/block"
+    . "$(dirname "$0")/lib/struct"
 fi
 
 comsui() {

@@ -1,17 +1,12 @@
 #!/bin/bash
 
-# Load utils first
-if [ -f "$(dirname "$0")/${APP}-lib/utils" ]; then
+# Import libraries and show location info
+if [ -f "$(dirname "$0")/${APP}-lib/colors" ]; then
     . "$(dirname "$0")/${APP}-lib/utils"
-else
-    . "$(dirname "$0")/lib/utils"
-fi
-
-# Import colors from appropriate location
-if f_ex "$(dirname "$0")/${APP}-lib/colors"; then
     . "$(dirname "$0")/${APP}-lib/colors"
     info "Running from bin installation."
 else
+    . "$(dirname "$0")/lib/utils"
     . "$(dirname "$0")/lib/colors"
     info "Running from repository."
 fi

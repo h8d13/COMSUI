@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Auto-import all libraries from appropriate location
+if [ -f "$(dirname "$0")/${APP}-lib/colors" ]; then
+    # Running from bin installation
+    . "$(dirname "$0")/${APP}-lib/utils"
+    . "$(dirname "$0")/${APP}-lib/colors"
+    . "$(dirname "$0")/${APP}-lib/sync"
+    . "$(dirname "$0")/${APP}-lib/block"
+else
+    # Running from repository
+    . "$(dirname "$0")/lib/utils"
+    . "$(dirname "$0")/lib/colors"
+    . "$(dirname "$0")/lib/sync"
+    . "$(dirname "$0")/lib/block"
+fi
