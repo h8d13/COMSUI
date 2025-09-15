@@ -123,7 +123,6 @@ class Interpreter:
                     export_cmd = f"export {var_name}='{var_value}'"
                     self._execute_in_session(export_cmd)
 
-                self.debug_print(f"Executing expanded command: '{expanded_cmd}'")
                 stdout, stderr, return_code = self._execute_in_session(expanded_cmd)
                 result = stdout.strip()
                 self.debug_print(f"Command substitution result: '{result}' (stderr: '{stderr}', rc: {return_code})")
@@ -134,26 +133,23 @@ class Interpreter:
 
         text = re.sub(r'\$\(([^)]+)\)', replace_cmd, text)
 
-        # Handle arithmetic expansion like $((expression))
+        # Handle arithmetic expansion like $((expression)) by delegating to bash
         def replace_arithmetic(match):
             expr = match.group(1)
             # First expand variables within the expression
             expanded_expr = self._expand_variables_only(expr)
-            self.debug_print(f"Arithmetic expansion: $(({expr})) -> $(({expanded_expr}))")
 
             try:
-                # Evaluate the arithmetic expression
-                # Simple arithmetic parser - handles basic operations
-                import re as arithmetic_re
+                # Export variables to session before arithmetic
+                for var_name, var_value in self.variables.items():
+                    export_cmd = f"export {var_name}='{var_value}'"
+                    self._execute_in_session(export_cmd)
 
-                # Replace bash variables and clean up whitespace
-                clean_expr = expanded_expr.strip()
-
-                # Simple evaluation for basic arithmetic
-                # This handles expressions like "count + 1", "23 + 1", etc.
-                result = eval(clean_expr, {"__builtins__": {}}, {})
-                self.debug_print(f"Arithmetic result: $(({expanded_expr})) = {result}")
-                return str(result)
+                # Use bash to evaluate the arithmetic expression
+                bash_cmd = f"echo $(({expanded_expr}))"
+                stdout, stderr, return_code = self._execute_in_session(bash_cmd)
+                result = stdout.strip()
+                return result
             except Exception as e:
                 self.debug_print(f"Arithmetic expansion error: {e}")
                 return f"$(({expr}))"
@@ -172,13 +168,10 @@ class Interpreter:
         def replace_var(match):
             var_name = match.group(1) or match.group(2)  # Handle both $var and ${var}
             var_value = str(self.variables.get(var_name, ""))
-            self.debug_print(f"Expanding variable: ${var_name} -> '{var_value}'")
             return var_value
 
         # Handle $varname and ${varname} only
-        original_text = text
         text = re.sub(r'\$\{([^}]+)\}|\$([A-Za-z_][A-Za-z0-9_]*)', replace_var, text)
-        self.debug_print(f"Variable expansion: '{original_text}' -> '{text}'")
         return text
 
     def evaluate(self, node: ASTNode) -> Any:
@@ -527,10 +520,8 @@ class Interpreter:
             while re.search(cmd_pattern, value_str):
                 for match in re.finditer(cmd_pattern, value_str):
                     cmd = match.group(1)
-                    self.debug_print(f"Variable assignment cmd substitution: {cmd}")
                     # Create a clean command substitution
                     cmd_result = self.evaluate_command_substitution(CommandSubstitution(cmd))
-                    self.debug_print(f"Variable assignment cmd result: {cmd_result}")
                     value_str = value_str.replace(match.group(0), cmd_result)
 
             value = value_str
