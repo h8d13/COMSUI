@@ -1,0 +1,3 @@
+count_f="/tmp/comsui_COMSUI_09-15_1000"
+result=$(f_read "$count_f" "DEFAULT")
+info "Result: $result"

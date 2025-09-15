@@ -36,6 +36,7 @@ today=$(t_date)
 repo_name=$(g_repo)
 user_id=$(n_user)
 count_f="/tmp/comsui_${repo_name}_${today}_${user_id}"
+info "DEBUG: count_f variable: $count_f"
 
 if f_no "$count_f"; then
     echo "0" > "$count_f"

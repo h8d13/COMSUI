@@ -118,6 +118,12 @@ class Interpreter:
             self.debug_print(f"Executing command substitution: {cmd} -> {expanded_cmd}")
 
             try:
+                # Export variables to persistent session before executing command substitution
+                for var_name, var_value in self.variables.items():
+                    export_cmd = f"export {var_name}='{var_value}'"
+                    self._execute_in_session(export_cmd)
+
+                self.debug_print(f"Executing expanded command: '{expanded_cmd}'")
                 stdout, stderr, return_code = self._execute_in_session(expanded_cmd)
                 result = stdout.strip()
                 self.debug_print(f"Command substitution result: '{result}' (stderr: '{stderr}', rc: {return_code})")
@@ -139,10 +145,14 @@ class Interpreter:
 
         def replace_var(match):
             var_name = match.group(1) or match.group(2)  # Handle both $var and ${var}
-            return str(self.variables.get(var_name, ""))
+            var_value = str(self.variables.get(var_name, ""))
+            self.debug_print(f"Expanding variable: ${var_name} -> '{var_value}'")
+            return var_value
 
         # Handle $varname and ${varname} only
+        original_text = text
         text = re.sub(r'\$\{([^}]+)\}|\$([A-Za-z_][A-Za-z0-9_]*)', replace_var, text)
+        self.debug_print(f"Variable expansion: '{original_text}' -> '{text}'")
         return text
 
     def evaluate(self, node: ASTNode) -> Any:
@@ -449,8 +459,12 @@ class Interpreter:
             export_cmd = f"export {var_name}='{var_value}'"
             self._execute_in_session(export_cmd)
 
+        # Expand variables in the command before execution
+        expanded_command = self._expand_variables_only(cmd_sub.command)
+        self.debug_print(f"Expanded command: '{expanded_command}'")
+
         # Execute command in persistent session
-        stdout, stderr, return_code = self._execute_in_session(cmd_sub.command)
+        stdout, stderr, return_code = self._execute_in_session(expanded_command)
 
         # Strip ANSI color codes and clean output
         output = stdout.strip()
@@ -487,8 +501,10 @@ class Interpreter:
             while re.search(cmd_pattern, value_str):
                 for match in re.finditer(cmd_pattern, value_str):
                     cmd = match.group(1)
+                    self.debug_print(f"Variable assignment cmd substitution: {cmd}")
                     # Create a clean command substitution
                     cmd_result = self.evaluate_command_substitution(CommandSubstitution(cmd))
+                    self.debug_print(f"Variable assignment cmd result: {cmd_result}")
                     value_str = value_str.replace(match.group(0), cmd_result)
 
             value = value_str

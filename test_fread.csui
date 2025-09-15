@@ -1,0 +1,10 @@
+info "Testing direct f_read call"
+result1=$(f_read "/tmp/comsui_COMSUI_09-15_1000")
+info "f_read result (no default): '$result1'"
+
+result2=$(f_read "/tmp/comsui_COMSUI_09-15_1000" "FALLBACK")
+info "f_read result (with fallback): '$result2'"
+
+info "Testing cat directly"
+result3=$(cat "/tmp/comsui_COMSUI_09-15_1000" 2>/dev/null || echo "CAT_FAILED")
+info "cat result: '$result3'"

@@ -1,0 +1,3 @@
+info "Testing f_read function"
+result=$(f_read "/tmp/comsui_COMSUI_09-15_1000" "DEFAULT")
+info "Result: $result"
