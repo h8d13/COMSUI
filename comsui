@@ -95,14 +95,13 @@ Last commit: $last_commit ($last_commit_time)"
   #r_upgrade "user"     # Ensures running as regular user
   #r_upgrade "clear"    # Clears sudo cache for security and reprompts
   #r_upgrade "admin" sh -c 'echo $(whoami)'  # Ensures sudo available for admin tasks adn wraps command with sudo
+  atom "Disk space check" "df -h | grep '/home'"
 
   #block --die "which node && echo 'Node found'"
   #block --die "which npm && npm --version"
   #block --warn "pgrep -f 'your-app-name' || echo 'Process not found'"
- 
   #block --warn "pgrep -f 'codium' || echo 'No codium processes found'"
   #block --die "pgrep -f 'codium' | xargs -r kill -TERM || echo 'Nothing to kill'
-  atom "Disk space" "df -h | grep '/home'"
 
   if u_confirm "Commit and push to $(g_upstream)?"; then
     if block --gitop "git commit -m \"$msg\""; then
