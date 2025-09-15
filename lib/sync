@@ -32,29 +32,29 @@ case "$*" in
             ;;
         "-t")
             # Remove existing app files if they exist
-            rm -f "${HOME}${BIN_PATH}/${APP}"
-            rm -rf "${HOME}${BIN_PATH}/${APP}-lib"
+            f_remove "$(p_bin)"
+            rm -rf "$(p_binlib)"
 
             # Copy executable directly to bin
-            cp "${APP:-comsui}" "${HOME}${BIN_PATH}/"
-            chmod +x "${HOME}${BIN_PATH}/${APP:-comsui}"
+            cp "${APP:-comsui}" "$(p_bin)"
+            f_exec "$(p_bin)"
 
             # Create app-lib directory and copy all lib files
-            d_make "${HOME}${BIN_PATH}/${APP:-comsui}-lib"
-            cp lib/* "${HOME}${BIN_PATH}/${APP:-comsui}-lib/"
+            d_make "$(p_binlib)"
+            cp lib/* "$(p_binlib)/"
 
             info "Synced $APP to ~$BIN_PATH"
             shift
             ;;
         "-f")
-            cp "${HOME}${BIN_PATH}/${APP}" ./"$APP"
-            cp "${HOME}${BIN_PATH}/${APP}-lib/"* lib/
+            cp "$(p_bin)" ./"$APP"
+            cp "$(p_binlib)/"* lib/
             info "Pulled $APP from ~$BIN_PATH"
             shift  
             exit 0
             ;;
         "-d")
-            rm -f "${HOME}${BIN_PATH}/${APP}" 
+            f_remove "$(p_bin)" 
             rm -rf "${HOME}${BIN_PATH}/${APP}-lib/"
             info "Deleted $APP from ~$BIN_PATH"
             shift  

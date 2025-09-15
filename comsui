@@ -43,13 +43,13 @@ Usage: comsui [-t][-l] [-c \"custom description\"] [-p] [-s] [-f]"
   block --die "which git || echo 'Git not found'"
 
   # Check if we're in a git repository
-  if ! git rev-parse --git-dir >/dev/null 2>&1; then
+  if ! g_check; then
     die "Error: Not in a git repository"
   fi
 
-  block --gitop "git add ." && git -c advice.statusHints=false status
+  block --gitop "g_add" && g_status
     # Check if there's anything to commit
-  if block --quiet "git diff --staged --quiet"; then
+  if block --quiet "g_staged"; then
     warn "No changes to commit"
     return 0
   fi
