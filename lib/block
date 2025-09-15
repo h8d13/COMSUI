@@ -7,6 +7,7 @@ block() {
     local color_func="info"
     local quiet=false
     local die_on_fail=false
+    local pre_print=""
 
     case "$1" in
         --info) color_func="info"; shift ;;
@@ -14,7 +15,13 @@ block() {
         --gitop) color_func="gitop"; shift ;;
         --quiet) quiet=true; shift ;;
         --die) color_func="warn"; die_on_fail=true; shift ;;
+        --pre) pre_print="$2"; shift 2 ;;
     esac
+
+    # Show pre-print message if provided
+    if s_set "$pre_print" && s_false "$quiet"; then
+        $color_func "$pre_print"
+    fi
 
     # Show command being executed (unless quiet)
     if s_false "$quiet"; then
@@ -48,4 +55,18 @@ block() {
     fi
 
     return $exit_code
+}
+
+# Atom utility - run command with description (reuses block)
+atom() {
+    local desc="$1"
+    shift
+
+    # Parse color prefix from description
+    case "$desc" in
+        --warn:*) block --pre "${desc#--warn:}" --warn "$@" ;;
+        --gitop:*) block --pre "${desc#--gitop:}" --gitop "$@" ;;
+        --die:*) block --pre "${desc#--die:}" --die "$@" ;;
+        *) block --pre "$desc" "$@" ;;
+    esac
 }
