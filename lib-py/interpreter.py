@@ -283,11 +283,18 @@ class Interpreter:
                 flag = arg[1:]  # Remove the -
                 if flag in option_map:
                     varname = option_map[flag]
-                    # Check if this flag expects a value
-                    if i + 1 < len(args) and not args[i + 1].startswith('-'):
-                        # Next arg is a value
-                        parsed_vars[varname] = args[i + 1]
-                        i += 2
+
+                    # Check if this option expects a value (has trailing : in spec)
+                    expects_value = any(spec.endswith(':') and spec.startswith(f"{flag}:") for spec in opts.option_specs)
+
+                    if expects_value:
+                        # Option requires a value
+                        if i + 1 < len(args):
+                            parsed_vars[varname] = args[i + 1]
+                            i += 2
+                        else:
+                            print(f"Error: Option -{flag} requires an argument", file=sys.stderr)
+                            return False
                     else:
                         # Boolean flag
                         parsed_vars[varname] = "true"
