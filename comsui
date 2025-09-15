@@ -58,7 +58,7 @@ Usage: comsui [-t][-l] [-c \"custom description\"] [-p] [-s] [-f]"
   randid=$(s_random 6 A-Z0-9)
   today=$(t_date)
   repo_name=$(g_repo)
-  user_id=$(id -u)
+  user_id=$(n_user)
   count_f="/tmp/${APP}_${repo_name}_${today}_${user_id}"
 
   if f_no "$count_f"; then
