@@ -6,10 +6,7 @@ if d_ex "${HOME}${BIN_PATH}/"; then
 else 
     die "Local bin not available"
 fi
-# If running under sudo, add root's local bin to PATH
-if [ -n "$SUDO_USER" ] && [ -d "/root/.local/bin" ]; then
-    export PATH="/root/.local/bin:$PATH"
-fi
+
 if ! s_inpath "${HOME}${BIN_PATH}"; then
     die "Bin not in path"
 fi

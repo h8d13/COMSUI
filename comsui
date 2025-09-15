@@ -47,13 +47,15 @@ Usage: comsui [-t][-l] [-c \"custom description\"] [-p] [-s] [-f]"
     die "Error: Not in a git repository"
   fi
 
-  block --gitop "g_add" && block --warn "g_status"
+  block --gitop "g_add"
     # Check if there's anything to commit
   if block --quiet "g_staged"; then
     warn "No changes to commit"
-    return 0
+    return 1
   fi
 
+  g_status
+  
   # ID + Date + Count per repository
   randid=$(s_random 6 A-Z0-9)
   today=$(t_date)
