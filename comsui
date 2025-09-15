@@ -14,11 +14,11 @@ comsui() {
   while [[ $# -gt 0 ]]; do
     case $1 in
       -l)
-        extended_desc=true
+        ext_desc=true
         shift
         ;;
       -c)
-        custom_desc="$2"
+        c_desc="$2"
         shift 2
         ;;
       -s)
@@ -59,26 +59,25 @@ comsui() {
   count=$(n_safe "$count")
 
   # Capture useful info if extended description needed
-  if s_true "$extended_desc"; then
+  if s_true "$ext_desc"; then
     last_commit=$(g_last)
-    last_commit_time=$(git log -1 --format="%cr" 2>/dev/null || echo "unknown")
+    last_commit_time=$(g_last)
   fi
 
   msg="$randid $(date "+%H:%M") #$(n_pad $count)"
 
-  # Add custom description if provided
-  if s_set "$custom_desc"; then
+  if s_set "$c_desc"; then
     msg="$msg
 
-feat: $custom_desc"
+feat: $c_desc"
   fi
 
   # If -l option, add extended description
-  if s_true "$extended_desc"; then
-    extended_body="
+  if s_true "$ext_desc"; then
+    ext_body="
 
 Last commit: $last_commit ($last_commit_time)"
-    msg="$msg$extended_body"
+    msg="$msg$ext_body"
   fi
 
   # Example r_upgrade usage:

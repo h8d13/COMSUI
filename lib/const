@@ -1,7 +1,15 @@
 #!/bin/bash
 # Check for options
-extended_desc=""
-custom_desc=""
+# Import libraries and show location info
+if [ -f "$(dirname "$0")/${APP}-lib/struc" ]; then
+    . "$(dirname "$0")/${APP}-lib/struc"
+    info "Running from bin installation."
+else
+    . "$(dirname "$0")/lib/struc"
+    info "Running from repository."
+fi
+ext_desc=""
+c_desc=""
 # ID + Date + Count per repository
 randid=$(s_random 6 A-Z0-9)
 today=$(t_date)
