@@ -42,12 +42,13 @@ comsui() {
     die "Error: Not in a git repository"
   fi
   
-  git diff && block --gitop "g_add"
   # Check if there's anything to commit
-  if block --quiet "g_staged"; then
+  if git diff --quiet && git diff --staged --quiet; then
     warn "No changes detected"
     exit 0
   fi
+
+  git diff && block --gitop "g_add"
   
 
   if f_no "$count_f"; then
