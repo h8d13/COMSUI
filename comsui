@@ -46,7 +46,7 @@ comsui() {
   block --gitop "g_add"
     # Check if there's anything to commit
   if block --quiet "g_staged"; then
-    die "No changes to commit"
+    exit 1
   fi
 
   g_status # to show info
