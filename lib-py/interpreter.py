@@ -42,9 +42,13 @@ class Interpreter:
             bufsize=0
         )
 
-        # Load COMSUI libraries using the same approach as bash_bridge
+        # Load COMSUI libraries directly (struct has path issues in interpreter)
         init_script = f'''
-        . "{self.bash_bridge.lib_path}/struct" 2>/dev/null
+        cd "{self.comsui_dir}"
+        . "{self.bash_bridge.lib_path}/utils" 2>/dev/null
+        . "{self.bash_bridge.lib_path}/colors" 2>/dev/null
+        . "{self.bash_bridge.lib_path}/sync" 2>/dev/null
+        . "{self.bash_bridge.lib_path}/block" 2>/dev/null
         export COMSUI_DIR="{self.comsui_dir}"
         echo "COMSUI_READY"
         '''
@@ -372,7 +376,25 @@ class Interpreter:
         self.debug_print(f"Executing: {func_name} {args}")
 
         # Special handling for interactive functions and control flow
-        if func_name == 'return':
+        if func_name == 's_random':
+            # Temporary workaround for s_random function
+            length = int(args[0]) if args else 6
+            charset = args[1] if len(args) > 1 else "A-Z0-9a-z"
+            import random
+            import string
+
+            # Convert charset notation to actual characters
+            if charset == "A-Z0-9":
+                chars = string.ascii_uppercase + string.digits
+            elif charset == "A-Za-z0-9":
+                chars = string.ascii_letters + string.digits
+            else:
+                chars = charset
+
+            result = ''.join(random.choice(chars) for _ in range(length))
+            self.debug_print(f"Generated random string: {result}")
+            return result
+        elif func_name == 'return':
             exit_code = int(args[0]) if args else 0
             self._should_exit = True
             sys.exit(exit_code)
