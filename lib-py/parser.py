@@ -102,8 +102,10 @@ class Parser:
     def parse_if_statement(self) -> IfStatement:
         self.consume(TokenType.IF)
 
-        # Parse condition as a function call if it's an identifier
-        if self.match(TokenType.IDENTIFIER):
+        # Parse condition - could be block statement, function call, or expression
+        if self.match(TokenType.BLOCK):
+            condition = self.parse_block_statement()
+        elif self.match(TokenType.IDENTIFIER):
             condition = self.parse_function_call()
         else:
             condition = self.parse_expression()

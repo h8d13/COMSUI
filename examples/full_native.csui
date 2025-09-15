@@ -5,7 +5,9 @@
 block --die "which git || echo 'Git not found'"
 
 # Repository validation
-if ! g_check; then
+if g_check; then
+    info "Repository found"
+else
     die "Error: Not in a git repository"
 fi
 
@@ -21,17 +23,19 @@ else
     info "Preparing commit message"
 
     # Confirm and commit
-    if u_confirm; then
+    if u_confirm "Commit and push to upstream?"; then
         # Create commit message (simplified for demo)
-        block --gitop "git commit -m 'Auto commit'"
+        block --gitop "git commit -m 'COMSUI auto commit'"
 
         # Push to upstream
         if block --gitop "git push $(g_remote) $(g_branch)"; then
-            info "Successfully pushed to $(g_upstream)"
+            info "Successfully pushed to remote"
         else
             die "Git push failed"
         fi
     else
-        info "Aborted."
+        info "Commit aborted by user"
     fi
 fi
+
+info "COMSUI workflow completed!"

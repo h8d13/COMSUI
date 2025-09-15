@@ -1,3 +1,9 @@
-# Simple test script
-info "Starting test"
-block --info "echo 'Hello from COMSUI'"
+# Simplified COMSUI test
+block --die "which git"
+
+if g_check; then
+    info "In git repo"
+    g_status
+else
+    die "Not in git repo"
+fi

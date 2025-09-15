@@ -127,7 +127,7 @@ class Interpreter:
 
         condition_result = self.evaluate(if_stmt.condition)
 
-        # Convert result to boolean
+        # Convert result to boolean - for block statements, check return code
         if isinstance(condition_result, bool):
             condition = condition_result
         elif isinstance(condition_result, int):
