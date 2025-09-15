@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 COMSUI Python Interpreter - Main Entry Point No Machine Code
-Usage: comsui_py [options] <script_file>
+Usage: csui_py [options] <script_file>
 """
 
 import sys
@@ -76,9 +76,9 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  comsui_py script.comsui              # Run COMSUI script
-  comsui_py --debug script.comsui      # Run with debug output
-  comsui_py --list-functions           # Show available bash functions
+  csui_py script.comsui              # Run COMSUI script
+  csui_py --debug script.comsui      # Run with debug output
+  csui_py --list-functions           # Show available bash functions
         """
     )
 

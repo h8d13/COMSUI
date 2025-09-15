@@ -16,8 +16,8 @@ Edit
 ./comsui *args
 
 # Python interpreter (debuggable)
-./comsui_py --debug examples/simple_test.csui
-./comsui_py --transpile examples/full_native.csui
+./csui_py --debug examples/simple_test.csui
+./csui_py --transpile examples/full_native.csui
 ```
 
 ## CSUI Language Syntax
@@ -77,7 +77,7 @@ fi
 
 **Run examples:**
 ```bash
-./comsui_py examples/full_native.csui     # Complete git workflow
-./comsui_py --debug examples/simple.csui # Debug mode
-./comsui_py --transpile examples/test.csui # Convert to bash
+./csui_py examples/full_native.csui     # Complete git workflow
+./csui_py --debug examples/simple_test.csui # Debug mode
+./csui_py --transpile examples/simple_test.csui # Convert to bash
 ```
