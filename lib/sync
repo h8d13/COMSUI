@@ -1,5 +1,14 @@
 #!/bin/bash
-
+BIN_PATH="/.local/bin"
+# Always check custom bin PATH set first. If not exit.
+if d_ex "${HOME}${BIN_PATH}/"; then
+    info "Found local bin."
+else 
+    die "Local bin not available"
+fi
+if ! s_inpath "${HOME}${BIN_PATH}"; then
+    die "Bin not in path"
+fi
 # Import libraries and show location info
 if [ -f "$(dirname "$0")/${APP}-lib/colors" ]; then
     . "$(dirname "$0")/${APP}-lib/utils"
@@ -11,17 +20,7 @@ else
     info "Running from repository."
 fi
 
-BIN_PATH="/.local/bin"
-# Always check custom bin PATH set first. If not exit.
-if d_ex "${HOME}${BIN_PATH}/"; then
-    info "Found local bin."
-else 
-    die "Local bin not available"
-fi
 
-if ! echo "$PATH" | grep -q "${HOME}${BIN_PATH}"; then
-    die "Bin not in path"
-fi
 
 # Only run sync if argument matches
 case "$*" in

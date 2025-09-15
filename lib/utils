@@ -19,6 +19,7 @@ s_true() { [[ "$1" == "true" ]]; }
 s_false() { [[ "$1" != "true" ]]; }
 s_set() { [[ -n "$1" ]]; }
 s_random() { head /dev/urandom | tr -dc "${2:-A-Z0-9a-z}" | head -c "${1:-6}"; }
+s_inpath() { echo "$PATH" | grep -q "$1"; }
 
 # Path utilities for script locations
 p_script() { p_dir "$0"; }
