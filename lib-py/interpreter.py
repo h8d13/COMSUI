@@ -70,8 +70,8 @@ class Interpreter:
         # Create unique marker for command completion
         marker = f"CMD_COMPLETE_{hash(command) % 10000}"
 
-        # Execute command, capture both output and exit code
-        # This ensures commands that don't output newlines are properly captured
+        # Execute command, but handle exit calls specially
+        # Wrap the command to detect if it tries to exit
         full_command = f'__output=$({command}); __exit_code=$?; echo -n "$__output"; echo; echo "{marker}:$__exit_code"\n'
 
         self._bash_session.stdin.write(full_command)
@@ -95,6 +95,11 @@ class Interpreter:
             stderr_line = self._bash_session.stderr.readline()
             if stderr_line:
                 stderr_lines.append(stderr_line.rstrip('\n'))
+
+        # If bash command returned non-zero and it looks like an exit call, terminate Python
+        if return_code != 0 and ('die' in command or 'exit' in command):
+            self.debug_print(f"Bash command '{command}' exited with code {return_code}, terminating Python interpreter")
+            sys.exit(return_code)
 
         return '\n'.join(stdout_lines), '\n'.join(stderr_lines), return_code
 
@@ -445,6 +450,11 @@ class Interpreter:
             print(stdout.strip())
         if stderr:
             print(stderr.strip(), file=sys.stderr)
+
+        # Handle exit calls from bash functions (like die)
+        if return_code != 0 and func_name in ['die']:
+            self.debug_print(f"Function {func_name} called exit with code {return_code}, terminating Python interpreter")
+            sys.exit(return_code)
 
         self.debug_print(f"Function {func_name} returned code {return_code}")
         return return_code == 0
