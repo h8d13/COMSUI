@@ -36,8 +36,7 @@ block --gitop "g_add" && g_status
 
 # Check if there's anything to commit
 if block --quiet "g_staged"; then
-    warn "No changes to commit"
-    return 0
+    die "No changes to commit"
 fi
 
 # ID + Date + Count per repository
