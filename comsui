@@ -90,11 +90,11 @@ feat: $custom_desc"
 Last commit: $last_commit ($last_commit_time)"
     msg="$msg$extended_body"
   fi
-  
+
   # Example r_upgrade usage:
-  #r_upgrade "admin"    # Ensures sudo available for admin tasks
   r_upgrade "user"     # Ensures running as regular user
   #r_upgrade "clear"    # Clears sudo cache for security
+  #r_upgrade "admin"    # Ensures sudo available for admin tasks
 
   #block --die "which node && echo 'Node found'"
   #block --die "which npm && npm --version"
@@ -103,10 +103,6 @@ Last commit: $last_commit ($last_commit_time)"
   #block --warn "pgrep -f 'codium' || echo 'No codium processes found'"
   #block --die "pgrep -f 'codium' | xargs -r kill -TERM || echo 'Nothing to kill'
   
-  #block --warn --pre "Clearing sudo cache" r_sudo_c
-  #block --warn --pre "Prompting for sudo password" r_sudo_p
-  #block --die --pre "Validating sudo credentials" r_sudo_v
-
   if u_confirm "Commit and push to origin/master?"; then
     if block --gitop "git commit -m \"$msg\""; then
       if block --gitop "git push origin master"; then
