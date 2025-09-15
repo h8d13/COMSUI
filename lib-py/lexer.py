@@ -87,15 +87,23 @@ class Lexer:
             self.advance()  # Skip first (
             self.advance()  # Skip second (
             result = ""
-            paren_count = 2  # We need to balance two levels of parentheses
+            paren_count = 0  # Count parentheses within the expression
 
-            while self.current_char() and paren_count > 0:
+            while self.current_char():
                 if self.current_char() == '(':
                     paren_count += 1
+                    result += self.current_char()
                 elif self.current_char() == ')':
-                    paren_count -= 1
-
-                if paren_count > 0:
+                    if paren_count > 0:
+                        paren_count -= 1
+                        result += self.current_char()
+                    else:
+                        # This is the first closing paren of ))
+                        self.advance()  # Skip first )
+                        if self.current_char() == ')':
+                            self.advance()  # Skip second )
+                        break
+                else:
                     result += self.current_char()
                 self.advance()
 
