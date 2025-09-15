@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# File/directory check shortcuts
+f_ex() { [ -f "$1" ]; }
+f_no() { [ ! -f "$1" ]; }
+d_ex() { [ -d "$1" ]; }
+d_no() { [ ! -d "$1" ]; }

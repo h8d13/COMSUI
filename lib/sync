@@ -1,7 +1,14 @@
 #!/bin/bash
 
+# Load utils first
+if [ -f "$(dirname "$0")/${APP}-lib/utils" ]; then
+    . "$(dirname "$0")/${APP}-lib/utils"
+else
+    . "$(dirname "$0")/lib/utils"
+fi
+
 # Import colors from appropriate location
-if [ -f "$(dirname "$0")/${APP}-lib/colors" ]; then
+if f_ex "$(dirname "$0")/${APP}-lib/colors"; then
     . "$(dirname "$0")/${APP}-lib/colors"
     info "Running from bin installation."
 else
@@ -11,7 +18,7 @@ fi
 
 BIN_PATH="/.local/bin"
 # Always check custom bin PATH set first. If not exit.
-if [ -d "${HOME}${BIN_PATH}/" ]; then
+if d_ex "${HOME}${BIN_PATH}/"; then
     info "Found local bin."
 else 
     die "Local bin not available"

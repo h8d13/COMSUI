@@ -4,7 +4,7 @@
 # Use first parameter or auto-detect app name
 if [ -n "$1" ]; then
     APP_NAME="$1"
-elif [ -d ".git" ]; then
+elif d_ex ".git"; then
     APP_NAME=$(basename "$(git rev-parse --show-toplevel)")
 else
     APP_NAME=$(basename "$(pwd)")
@@ -15,7 +15,7 @@ cat > "$APP_NAME" << EOF
 
 APP=${APP_NAME}
 # Load libraries from appropriate locations
-if [ -f "\$(dirname "\$0")/\${APP}-lib/colors" ]; then
+if f_ex "\$(dirname "\$0")/\${APP}-lib/colors"; then
     . "\$(dirname "\$0")/\${APP}-lib/colors"
     . "\$(dirname "\$0")/\${APP}-lib/sync"
     . "\$(dirname "\$0")/\${APP}-lib/block"

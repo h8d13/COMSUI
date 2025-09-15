@@ -2,8 +2,15 @@
 # App configuration
 APP=${APP:-comsui}
 
+# Load utils first
+if [ -f "$(dirname "$0")/${APP}-lib/utils" ]; then
+    . "$(dirname "$0")/${APP}-lib/utils"
+else
+    . "$(dirname "$0")/lib/utils"
+fi
+
 # . colors from appropriate locations
-if [ -f "$(dirname "$0")/${APP}-lib/colors" ]; then
+if f_ex "$(dirname "$0")/${APP}-lib/colors"; then
     . "$(dirname "$0")/${APP}-lib/colors"
     . "$(dirname "$0")/${APP}-lib/sync"
     . "$(dirname "$0")/${APP}-lib/block"
@@ -64,7 +71,7 @@ Usage: comsui [-t][-l] [-c \"custom description\"] [-p] [-s] [-f]"
   repo_name=$(basename "$(git rev-parse --show-toplevel)")
   count_file="/tmp/${APP}_${repo_name}_${today}"
 
-  if [ ! -f "$count_file" ]; then
+  if f_no "$count_file"; then
     echo "0" > "$count_file"
   fi
   count=$(cat "$count_file" 2>/dev/null || echo "0")
