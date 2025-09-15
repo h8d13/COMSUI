@@ -112,3 +112,4 @@ final test
 test bash version
 debug arithmetic
 test final fix
+final working test
