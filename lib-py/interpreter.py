@@ -328,12 +328,9 @@ class Interpreter:
                 if hasattr(self, '_should_exit') and self._should_exit:
                     break
         finally:
-            # Restore old variable values
-            for varname in parsed_vars:
-                if varname in old_vars:
-                    self.variables[varname] = old_vars[varname]
-                else:
-                    del self.variables[varname]
+            # Keep option variables globally available (don't restore old values)
+            # This ensures command-line options remain accessible throughout the script
+            pass
 
         return result
 
