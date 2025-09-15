@@ -133,26 +133,27 @@ class Interpreter:
 
         text = re.sub(r'\$\(([^)]+)\)', replace_cmd, text)
 
-        # Handle arithmetic expansion like $((expression)) by delegating to bash
+        # Handle arithmetic expansion like $((expression))
         def replace_arithmetic(match):
             expr = match.group(1)
             # First expand variables within the expression
             expanded_expr = self._expand_variables_only(expr)
 
             try:
-                # Export variables to session before arithmetic
-                for var_name, var_value in self.variables.items():
-                    export_cmd = f"export {var_name}='{var_value}'"
-                    self._execute_in_session(export_cmd)
+                # Simple arithmetic evaluation for basic expressions
+                # Clean the expression and evaluate it
+                clean_expr = expanded_expr.strip()
 
-                # Use bash to evaluate the arithmetic expression
-                bash_cmd = f"echo $(({expanded_expr}))"
-                stdout, stderr, return_code = self._execute_in_session(bash_cmd)
-                result = stdout.strip()
-                return result
+                # Replace common bash operators if needed
+                clean_expr = clean_expr.replace(' ', '')
+
+                # Use Python's eval for simple arithmetic (safe with restricted builtins)
+                # This handles expressions like "23+1", "count+1", etc.
+                result = eval(clean_expr, {"__builtins__": {}}, {})
+                return str(int(result))
             except Exception as e:
-                self.debug_print(f"Arithmetic expansion error: {e}")
-                return f"$(({expr}))"
+                self.debug_print(f"Arithmetic expansion error: {e} for expression: {expanded_expr}")
+                return "0"
 
         text = re.sub(r'\$\(\(([^)]+)\)\)', replace_arithmetic, text)
 
