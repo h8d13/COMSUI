@@ -100,7 +100,7 @@ Last commit: $last_commit ($last_commit_time)"
   #block --warn --pre "Clearing sudo cache" r_sudo_c
   #block --warn --pre "Prompting for sudo password" r_sudo_p
   #block --die --pre "Validating sudo credentials" r_sudo_v
-  #r_sudo
+  r_sudo
 
   if u_confirm "Commit and push to origin/master?"; then
     if block --gitop "git commit -m \"$msg\""; then
