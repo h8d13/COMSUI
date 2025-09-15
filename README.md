@@ -48,20 +48,22 @@ fi
 
 ## Core Functions
 
+Explore `/lib` to see all available
+
 **Git**: `g_check`, `g_status`, `g_add`, `g_branch`, `g_remote`, `g_upstream`
-**Block**: `block --info|--warn|--gitop|--die|--quiet "command"`
+**Blocks/Atoms**: `block --info|--warn|--gitop|--die|--quiet "command"`
 **Utils**: `info`, `warn`, `die`, `u_confirm`, `r_upgrade`
 
 ## Templates
 
-Generate new COMSUI projects:
+Generate new COMSUI projects (for bash):
 
 ```bash
 ./template myproject    # Create new project
 ./myproject -t         # Install to ~/.local/bin
 ```
 
-## CSUI Examples
+## CSUI scripting Examples
 
 **Simple workflow:**
 ```csui
