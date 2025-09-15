@@ -66,17 +66,28 @@ r_sudo_p() { sudo -v; }
 r_sudo_v() { sudo -n true 2>/dev/null; }
 r_upgrade() {
     local cmd="$1"
+    shift
     case "$cmd" in
         "admin"|"sys"|"root")
             if ! r_sudo_v; then
                 info "Command '$cmd' requires sudo privileges"
                 r_sudo_p || die "Failed to obtain sudo privileges for: $cmd"
             fi
-            info "Elevated privileges confirmed for $(whoami)"
+            if [ $# -gt 0 ]; then
+                info "Executing with sudo: $*"
+                sudo "$@"
+            else
+                info "Elevated privileges confirmed for $(whoami)"
+            fi
             ;;
         "user"|"local")
             r_user
-            info "Running as regular user: $(whoami) "
+            if [ $# -gt 0 ]; then
+                info "Executing as user: $*"
+                "$@"
+            else
+                info "Running as regular user: $(whoami)"
+            fi
             ;;
         "clear"|"reset")
             r_sudo_c
@@ -84,7 +95,12 @@ r_upgrade() {
             info "Cleared sudo cache and re-validated for $(whoami)"
             ;;
         *)
-            info "No special privileges required for: $cmd"
+            if [ $# -gt 0 ]; then
+                info "Executing: $*"
+                "$@"
+            else
+                info "No special privileges required for: $cmd"
+            fi
             ;;
     esac
 }
