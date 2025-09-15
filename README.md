@@ -8,7 +8,7 @@ COMSUI is a domain-specific language for system operations and automation, with 
 - **Block Operations**: Structured command execution with timing and error handling
 - **Git Integration**: Built-in git utilities and workflow automation
 - **Template System**: Quick project scaffolding with `./template`
-Edit
+
 ## Quick Start
 
 ```bash
