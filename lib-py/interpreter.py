@@ -531,6 +531,30 @@ class Interpreter:
                     cmd_result = self.evaluate_command_substitution(CommandSubstitution(cmd))
                     value_str = value_str.replace(match.group(0), cmd_result)
 
+            # Handle arithmetic expansion within the string
+            arithmetic_pattern = r'\$\(\(([^)]+)\)\)'
+            while re.search(arithmetic_pattern, value_str):
+                for match in re.finditer(arithmetic_pattern, value_str):
+                    expr = match.group(1)
+                    self.debug_print(f"Variable assignment arithmetic: $(({expr}))")
+
+                    # Expand variables in the arithmetic expression
+                    expanded_expr = expr
+                    for var_name, var_value in self.variables.items():
+                        expanded_expr = expanded_expr.replace(var_name, str(var_value))
+
+                    self.debug_print(f"Expanded arithmetic: {expanded_expr}")
+
+                    try:
+                        # Clean and evaluate the arithmetic expression
+                        clean_expr = expanded_expr.strip().replace(' ', '')
+                        result = eval(clean_expr, {"__builtins__": {}}, {})
+                        self.debug_print(f"Arithmetic result: {clean_expr} = {result}")
+                        value_str = value_str.replace(match.group(0), str(int(result)))
+                    except Exception as e:
+                        self.debug_print(f"Arithmetic error: {e}")
+                        value_str = value_str.replace(match.group(0), "0")
+
             value = value_str
 
         # Store in variables dict
