@@ -6,7 +6,7 @@ from typing import List, Optional
 from token_types import Token, TokenType
 from ast_nodes import (
     ASTNode, Program, BlockStatement, AtomStatement, FunctionCall,
-    IfStatement, CommandSubstitution, StringLiteral, Identifier, VariableAssignment, OptsStatement, CompoundStatement
+    IfStatement, CommandSubstitution, ArithmeticExpansion, StringLiteral, Identifier, VariableAssignment, OptsStatement, CompoundStatement
 )
 
 
@@ -232,6 +232,10 @@ class Parser:
             command = self.current_token().value
             self.advance()
             return CommandSubstitution(command)
+        elif self.match(TokenType.ARITHMETIC_EXPANSION):
+            expression = self.current_token().value
+            self.advance()
+            return ArithmeticExpansion(expression)
         elif self.match(TokenType.OPTION):
             option = self.current_token().value
             self.advance()

@@ -46,6 +46,7 @@ class TokenType(Enum):
     NEWLINE = auto()
     EOF = auto()
     COMMAND_SUB = auto()  # $(...) or `...`
+    ARITHMETIC_EXPANSION = auto()  # $((...))
 
 
 @dataclass

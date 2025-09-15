@@ -80,9 +80,34 @@ class Lexer:
             self.advance()
         return result
 
+    def read_arithmetic_expansion(self) -> str:
+        if (self.current_char() == '$' and self.peek_char() == '(' and self.peek_char(2) == '('):
+            # $((expression)) format
+            self.advance()  # Skip $
+            self.advance()  # Skip first (
+            self.advance()  # Skip second (
+            result = ""
+            paren_count = 2  # We need to balance two levels of parentheses
+
+            while self.current_char() and paren_count > 0:
+                if self.current_char() == '(':
+                    paren_count += 1
+                elif self.current_char() == ')':
+                    paren_count -= 1
+
+                if paren_count > 0:
+                    result += self.current_char()
+                self.advance()
+
+            return result
+        return ""
+
     def read_command_substitution(self) -> str:
         if self.current_char() == '$' and self.peek_char() == '(':
-            # $(command) format
+            # $(command) format - but NOT $((arithmetic))
+            if self.peek_char(2) == '(':
+                return ""  # This is arithmetic expansion, not command substitution
+
             self.advance()  # Skip $
             self.advance()  # Skip (
             result = ""
@@ -145,7 +170,13 @@ class Lexer:
                 self.tokens.append(Token(TokenType.STRING, string_value, start_line, start_column))
                 continue
 
-            # Command substitution
+            # Arithmetic expansion $((expression))
+            if (self.current_char() == '$' and self.peek_char() == '(' and self.peek_char(2) == '('):
+                arithmetic_value = self.read_arithmetic_expansion()
+                self.tokens.append(Token(TokenType.ARITHMETIC_EXPANSION, arithmetic_value, start_line, start_column))
+                continue
+
+            # Command substitution $(command) or `command`
             if ((self.current_char() == '$' and self.peek_char() == '(') or
                 self.current_char() == '`'):
                 cmd_value = self.read_command_substitution()

@@ -46,6 +46,11 @@ class CommandSubstitution(ASTNode):
 
 
 @dataclass
+class ArithmeticExpansion(ASTNode):
+    expression: str
+
+
+@dataclass
 class StringLiteral(ASTNode):
     value: str
 

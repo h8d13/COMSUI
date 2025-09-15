@@ -6,7 +6,7 @@ import sys
 from typing import Any
 from ast_nodes import (
     ASTNode, Program, BlockStatement, AtomStatement, FunctionCall,
-    IfStatement, CommandSubstitution, StringLiteral, Identifier, VariableAssignment, OptsStatement, CompoundStatement
+    IfStatement, CommandSubstitution, ArithmeticExpansion, StringLiteral, Identifier, VariableAssignment, OptsStatement, CompoundStatement
 )
 from bash_bridge import BashBridge
 
@@ -201,6 +201,8 @@ class Interpreter:
             return self.evaluate_if_statement(node)
         elif isinstance(node, CommandSubstitution):
             return self.evaluate_command_substitution(node)
+        elif isinstance(node, ArithmeticExpansion):
+            return self.evaluate_arithmetic_expansion(node)
         elif isinstance(node, VariableAssignment):
             return self.evaluate_variable_assignment(node)
         elif isinstance(node, StringLiteral):
@@ -506,6 +508,27 @@ class Interpreter:
 
         self.debug_print(f"Command substitution result: '{output}'")
         return output
+
+    def evaluate_arithmetic_expansion(self, arith_exp: ArithmeticExpansion) -> str:
+        """Execute arithmetic expansion and return result"""
+        self.debug_print(f"Arithmetic expansion: $(({arith_exp.expression}))")
+
+        # Expand variables in the expression
+        expanded_expr = arith_exp.expression
+        for var_name, var_value in self.variables.items():
+            expanded_expr = expanded_expr.replace(var_name, str(var_value))
+
+        self.debug_print(f"Expanded arithmetic: {expanded_expr}")
+
+        try:
+            # Clean and evaluate the arithmetic expression
+            clean_expr = expanded_expr.strip().replace(' ', '')
+            result = eval(clean_expr, {"__builtins__": {}}, {})
+            self.debug_print(f"Arithmetic result: {clean_expr} = {result}")
+            return str(int(result))
+        except Exception as e:
+            self.debug_print(f"Arithmetic error: {e}")
+            return "0"
 
     def evaluate_variable_assignment(self, var_assign: VariableAssignment) -> Any:
         """Execute variable assignment"""
