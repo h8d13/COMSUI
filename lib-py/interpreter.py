@@ -71,8 +71,13 @@ class Interpreter:
         marker = f"CMD_COMPLETE_{hash(command) % 10000}"
 
         # Execute command, but handle exit calls specially
-        # Wrap the command to detect if it tries to exit
-        full_command = f'__output=$({command}); __exit_code=$?; echo -n "$__output"; echo; echo "{marker}:$__exit_code"\n'
+        # Handle file redirections properly - don't wrap them in command substitution
+        if '>' in command or '<' in command or '>>' in command:
+            # For redirections, execute directly without command substitution
+            full_command = f'{command}; __exit_code=$?; echo "{marker}:$__exit_code"\n'
+        else:
+            # Wrap the command to capture output
+            full_command = f'__output=$({command}); __exit_code=$?; echo -n "$__output"; echo; echo "{marker}:$__exit_code"\n'
 
         self._bash_session.stdin.write(full_command)
         self._bash_session.stdin.flush()
@@ -82,12 +87,15 @@ class Interpreter:
         return_code = 0
 
         # Read output until we see our completion marker
+        has_redirects = '>' in command or '<' in command or '>>' in command
         while True:
             line = self._bash_session.stdout.readline()
             if f"{marker}:" in line:
                 return_code = int(line.split(":")[-1].strip())
                 break
-            stdout_lines.append(line.rstrip('\n'))
+            # Don't collect stdout for redirect commands since they don't produce output to capture
+            if not has_redirects:
+                stdout_lines.append(line.rstrip('\n'))
 
         # Check for any stderr output (non-blocking)
         import select

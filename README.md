@@ -100,3 +100,4 @@ fi
 # still no tincremting
 debug write
 bash test
+test redirection fix
