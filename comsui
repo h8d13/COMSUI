@@ -55,35 +55,35 @@ Usage: comsui [-t][-l] [-c \"custom description\"] [-p] [-s] [-f]"
   fi
 
   # ID + Date + Count per repository
-  randid=$(head /dev/urandom | tr -dc A-Z0-9 | head -c 6)
-  today=$(date "+%m-%d")
-  repo_name=$(p_name "$(git rev-parse --show-toplevel)")
+  randid=$(s_random 6 A-Z0-9)
+  today=$(t_date)
+  repo_name=$(g_repo)
   count_file="/tmp/${APP}_${repo_name}_${today}"
 
   if f_no "$count_file"; then
     echo "0" > "$count_file"
   fi
-  count=$(cat "$count_file" 2>/dev/null || echo "0")
+  count=$(f_read "$count_file" "0")
   # Ensure count is a number
-  count=$(($count + 0))
+  count=$(n_safe "$count")
 
   # Capture useful info if extended description needed
-  if [[ "$extended_desc" == "true" ]]; then
-    last_commit=$(git log -1 --format="%h - %s" 2>/dev/null || echo "No previous commits")
+  if s_true "$extended_desc"; then
+    last_commit=$(g_last)
     last_commit_time=$(git log -1 --format="%cr" 2>/dev/null || echo "unknown")
   fi
 
-  msg="$randid $(date "+%H:%M") #$(printf "%03d" $count)"
+  msg="$randid $(date "+%H:%M") #$(n_pad $count)"
 
   # Add custom description if provided
-  if [[ -n "$custom_desc" ]]; then
+  if s_set "$custom_desc"; then
     msg="$msg
 
 feat: $custom_desc"
   fi
 
   # If -l option, add extended description
-  if [[ "$extended_desc" == "true" ]]; then
+  if s_true "$extended_desc"; then
     extended_body="
 
 Last commit: $last_commit ($last_commit_time)"
@@ -97,8 +97,7 @@ Last commit: $last_commit ($last_commit_time)"
   #block --warn "pgrep -f 'codium' || echo 'No codium processes found'"
   #block --die "pgrep -f 'codium' | xargs -r kill -TERM || echo 'Nothing to kill'
   
-  read -p "Commit and push to origin/master? [y/N] " confirm
-  if [[ "$confirm" =~ ^[Yy]$ ]]; then
+  if u_confirm "Commit and push to origin/master?"; then
     if block --gitop "git commit -m \"$msg\""; then
       if block --gitop "git push origin master"; then
         # Increment count and write back to file

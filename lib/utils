@@ -5,6 +5,8 @@ f_ex() { [ -f "$1" ]; }
 f_no() { [ ! -f "$1" ]; }
 d_ex() { [ -d "$1" ]; }
 d_no() { [ ! -d "$1" ]; }
+# Directory operations
+d_make() { mkdir -p "$1"; }
 
 # Path utilities
 p_dir() { dirname "$1"; }
@@ -13,6 +15,37 @@ p_name() { basename "$1"; }
 # String utilities
 s_empty() { [ -z "$1" ]; }
 s_has() { [[ "$1" == *"$2"* ]]; }
+s_true() { [[ "$1" == "true" ]]; }
+s_false() { [[ "$1" != "true" ]]; }
+s_set() { [[ -n "$1" ]]; }
+s_random() { head /dev/urandom | tr -dc "${2:-A-Z0-9a-z}" | head -c "${1:-6}"; }
 
-# Directory operations
-d_make() { mkdir -p "$1"; }
+# Path utilities for script locations
+p_script() { p_dir "$0"; }
+p_bin() { echo "${HOME}${BIN_PATH}/${APP}"; }
+p_binlib() { echo "${HOME}${BIN_PATH}/${APP}-lib"; }
+
+# File operations with safety
+f_read() { cat "$1" 2>/dev/null || echo "${2:-}"; }
+f_remove() { rm -f "$1"; }
+f_exec() { chmod +x "$1"; }
+
+# Git operations
+g_repo() { p_name "$(git rev-parse --show-toplevel)"; }
+g_check() { git rev-parse --git-dir >/dev/null 2>&1; }
+g_last() { git log -1 --format="%h - %s" 2>/dev/null || echo "No previous commits"; }
+
+# Time utilities
+t_date() { date "${1:-+%m-%d}"; }
+t_timestamp() { date +%s%3N; }
+
+# User interaction
+u_confirm() {
+    read -p "${1:-Continue?} [y/N] " confirm
+    [[ "$confirm" =~ ^[Yy]$ ]]
+}
+
+# Numeric operations
+n_safe() { echo $(($1 + 0)) 2>/dev/null || echo "${2:-0}"; }
+n_pad() { printf "%0${2:-3}d" "$1"; }
+

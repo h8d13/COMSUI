@@ -5,7 +5,7 @@
 if [ -n "$1" ]; then
     APP_NAME="$1"
 elif d_ex ".git"; then
-    APP_NAME=$(p_name "$(git rev-parse --show-toplevel)")
+    APP_NAME=$(g_repo)
 else
     APP_NAME=$(p_name "$(pwd)")
 fi
@@ -35,5 +35,5 @@ ${APP_NAME}() {
 \$APP "\$@"
 EOF
 
-chmod +x "$APP_NAME"
+f_exec "$APP_NAME"
 echo "Created executable: $APP_NAME"
