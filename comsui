@@ -102,7 +102,8 @@ Last commit: $last_commit ($last_commit_time)"
  
   #block --warn "pgrep -f 'codium' || echo 'No codium processes found'"
   #block --die "pgrep -f 'codium' | xargs -r kill -TERM || echo 'Nothing to kill'
-  
+  atom "Disk space" "df -h | grep '/home'"
+
   if u_confirm "Commit and push to $(g_upstream)?"; then
     if block --gitop "git commit -m \"$msg\""; then
       if block --gitop "git push $(g_remote) $(g_branch)"; then
