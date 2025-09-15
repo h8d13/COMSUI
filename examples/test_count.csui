@@ -1,5 +1,0 @@
-# Test count increment logic
-count=5
-count=$((count + 1))
-echo "$count" > "/tmp/test_count_file"
-info "Count set to $count"

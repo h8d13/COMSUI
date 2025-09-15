@@ -1,6 +1,0 @@
-# Test confirmation function
-if u_confirm "Test question?"; then
-    info "You said yes"
-else
-    info "You said no"
-fi
