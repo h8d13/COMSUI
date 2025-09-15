@@ -1,12 +1,4 @@
 #!/bin/bash
-# Import libraries and show location info
-if [ -f "$(dirname "$0")/${APP}-lib/struc" ]; then
-    . "$(dirname "$0")/${APP}-lib/struc"
-    info "Running from bin installation."
-else
-    . "$(dirname "$0")/lib/struc"
-    info "Running from repository."
-fi
 # Colors are already sourced by main script, no need to import again
 # Block utility - run commands with colored output
 block() {

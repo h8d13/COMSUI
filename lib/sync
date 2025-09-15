@@ -14,7 +14,7 @@ fi
 if [ -f "$(dirname "$0")/${APP}-lib/struc" ]; then
     . "$(dirname "$0")/${APP}-lib/struc"
     info "Running from bin installation."
-else [ -f "$(dirname "$0")/lib/struc" ]; then
+else
     . "$(dirname "$0")/lib/struc"
     info "Running from repository."
 fi
