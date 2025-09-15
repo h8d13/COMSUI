@@ -45,9 +45,9 @@ comsui() {
   # always add from . first
   block --gitop "g_add"
     # Check if there's anything to commit
+  block --gitop "git diff"
   if block --quiet "g_staged"; then
     warn "No changes detected"
-    block --gitop "git diff"
   fi
 
   g_status # to show info
