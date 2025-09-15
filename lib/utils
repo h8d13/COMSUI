@@ -72,7 +72,7 @@ r_upgrade() {
                 info "Command '$cmd' requires sudo privileges"
                 r_sudo_p || die "Failed to obtain sudo privileges for: $cmd"
             fi
-            info "Elevated privileges confirmed for: $cmd as $SUDO_USER"
+            info "Elevated privileges confirmed for: $cmd as $(whoami)"
             ;;
         "user"|"local")
             r_user
@@ -80,7 +80,8 @@ r_upgrade() {
             ;;
         "clear"|"reset")
             r_sudo_c
-            info "Cleared sudo cache for: $cmd"
+            r_sudo_p || die "Failed to re-validate sudo after clearing cache"
+            info "Cleared sudo cache and re-validated for: $cmd as $(whoami)"
             ;;
         *)
             info "No special privileges required for: $cmd"
