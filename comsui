@@ -47,7 +47,7 @@ Usage: comsui [-t][-l] [-c \"custom description\"] [-p] [-s] [-f]"
     die "Error: Not in a git repository"
   fi
 
-  block --gitop "g_add" && g_status
+  block --gitop "g_add" && block --warn "g_status"
     # Check if there's anything to commit
   if block --quiet "g_staged"; then
     warn "No changes to commit"
