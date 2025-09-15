@@ -1,0 +1,111 @@
+#!/usr/bin/env python3
+"""
+COMSUI Python Interpreter - Main Entry Point No Machine Code
+Usage: comsui_py [options] <script_file>
+"""
+
+import sys
+import os
+import argparse
+
+# Prevent bytecode generation
+sys.dont_write_bytecode = True
+
+# Add lib-py to path
+lib_py_path = os.path.join(os.path.dirname(__file__), 'lib-py')
+sys.path.insert(0, lib_py_path)
+
+from token_types import Token, TokenType
+from lexer import Lexer
+from parser import Parser
+from interpreter import Interpreter
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description='COMSUI Python Interpreter',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  comsui_py script.comsui              # Run COMSUI script
+  comsui_py --debug script.comsui      # Run with debug output
+  comsui_py --list-functions           # Show available bash functions
+        """
+    )
+
+    parser.add_argument('script_file', nargs='?', help='COMSUI script to execute')
+    parser.add_argument('--debug', action='store_true', help='Enable debug output')
+    parser.add_argument('--list-functions', action='store_true',
+                       help='List available bash functions and exit')
+    parser.add_argument('--transpile', action='store_true',
+                       help='Transpile to bash and print (don\'t execute)')
+
+    args = parser.parse_args()
+
+    comsui_dir = os.path.dirname(os.path.abspath(__file__))
+
+    # Handle --list-functions
+    if args.list_functions:
+        interpreter = Interpreter(comsui_dir)
+        functions = interpreter.get_available_functions()
+        print("Available COMSUI functions:")
+        for func in sorted(functions):
+            print(f"  {func}")
+        return
+
+    # Require script file
+    if not args.script_file:
+        parser.print_help()
+        sys.exit(1)
+
+    script_file = args.script_file
+
+    try:
+        with open(script_file, 'r') as f:
+            source_code = f.read()
+
+        # Tokenize
+        if args.debug:
+            print(f"[DEBUG] Tokenizing {script_file}", file=sys.stderr)
+
+        lexer = Lexer(source_code)
+        tokens = lexer.tokenize()
+
+        if args.debug:
+            print(f"[DEBUG] Generated {len(tokens)} tokens", file=sys.stderr)
+            for i, token in enumerate(tokens[:10]):  # Show first 10 tokens
+                print(f"[DEBUG] Token {i}: {token}", file=sys.stderr)
+            if len(tokens) > 10:
+                print(f"[DEBUG] ... and {len(tokens) - 10} more tokens", file=sys.stderr)
+
+        # Parse
+        args.debug and print(f"[DEBUG] Parsing tokens into AST", file=sys.stderr)
+        parser_obj = Parser(tokens)
+        ast = parser_obj.parse()
+
+        args.debug and print(f"[DEBUG] Generated AST with {len(ast.statements)} statements", file=sys.stderr)
+
+        # Transpile mode - convert back to bash and exit
+        if args.transpile:
+            print(transpile_to_bash(ast))
+            return
+
+        # Interpret
+        args.debug and print(f"[DEBUG] Executing AST", file=sys.stderr)
+        interpreter = Interpreter(comsui_dir)
+        interpreter.set_debug(args.debug)
+        interpreter.evaluate(ast)
+
+    except FileNotFoundError:
+        print(f"Error: File '{script_file}' not found", file=sys.stderr)
+        sys.exit(1)
+    except Exception as e:
+        if args.debug:
+            import traceback
+            traceback.print_exc()
+        else:
+            print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)
+
+if __name__ == '__main__':
+    main()

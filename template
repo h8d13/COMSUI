@@ -1,4 +1,4 @@
- #!/bin/bash
+#!/bin/bash
 # template - Generic app template
 
 # Use first parameter or auto-detect app name
@@ -12,17 +12,14 @@ fi
 # Copy the main script structure
 cat > "$APP_NAME" << EOF
 #!/bin/bash
+# App configuration
+APP=\${APP:-${APP_NAME}}
 
-APP=${APP_NAME}
-# Load libraries from appropriate locations
-if f_ex "\$(dirname "\$0")/\${APP}-lib/colors"; then
-    . "\$(dirname "\$0")/\${APP}-lib/colors"
-    . "\$(dirname "\$0")/\${APP}-lib/sync"
-    . "\$(dirname "\$0")/\${APP}-lib/block"
+# Import all libraries
+if [ -f "\$(dirname "\$0")/\${APP}-lib/struct" ]; then
+    . "\$(dirname "\$0")/\${APP}-lib/struct"
 else
-    . "\$(dirname "\$0")/lib/colors"
-    . "\$(dirname "\$0")/lib/sync"
-    . "\$(dirname "\$0")/lib/block"
+    . "\$(dirname "\$0")/lib/struct"
 fi
 
 # Main app function - customize this part

@@ -1,0 +1,37 @@
+# COMSUI written in COMSUI language - the ultimate test!
+# This replaces the bash version with native COMSUI syntax
+
+# Prerequisites check
+block --die "which git || echo 'Git not found'"
+
+# Repository validation
+if ! g_check; then
+    die "Error: Not in a git repository"
+fi
+
+# Add all changes and show status
+block --gitop "g_add"
+g_status
+
+# Check if there's anything to commit
+if g_staged; then
+    warn "No changes to commit"
+else
+    # Generate commit message components
+    info "Preparing commit message"
+
+    # Confirm and commit
+    if u_confirm; then
+        # Create commit message (simplified for demo)
+        block --gitop "git commit -m 'Auto commit'"
+
+        # Push to upstream
+        if block --gitop "git push $(g_remote) $(g_branch)"; then
+            info "Successfully pushed to $(g_upstream)"
+        else
+            die "Git push failed"
+        fi
+    else
+        info "Aborted."
+    fi
+fi
