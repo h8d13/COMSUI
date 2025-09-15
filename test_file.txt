@@ -1,1 +1,2 @@
 test content
+test line for custom message

@@ -70,9 +70,9 @@ class Interpreter:
         # Create unique marker for command completion
         marker = f"CMD_COMPLETE_{hash(command) % 10000}"
 
-        # Execute command, capture output to variable, then echo both output and marker
+        # Execute command, capture both output and exit code
         # This ensures commands that don't output newlines are properly captured
-        full_command = f'__output=$({command}); echo -n "$__output"; echo; echo "{marker}:$?"\n'
+        full_command = f'__output=$({command}); __exit_code=$?; echo -n "$__output"; echo; echo "{marker}:$__exit_code"\n'
 
         self._bash_session.stdin.write(full_command)
         self._bash_session.stdin.flush()
@@ -105,7 +105,7 @@ class Interpreter:
         # First expand variables like $varname and ${varname}
         def replace_var(match):
             var_name = match.group(1) or match.group(2)  # Handle both $var and ${var}
-            return str(self.variables.get(var_name, f"${var_name}"))
+            return str(self.variables.get(var_name, ""))
 
         # Handle $varname and ${varname}
         text = re.sub(r'\$\{([^}]+)\}|\$([A-Za-z_][A-Za-z0-9_]*)', replace_var, text)
@@ -139,7 +139,7 @@ class Interpreter:
 
         def replace_var(match):
             var_name = match.group(1) or match.group(2)  # Handle both $var and ${var}
-            return str(self.variables.get(var_name, f"${var_name}"))
+            return str(self.variables.get(var_name, ""))
 
         # Handle $varname and ${varname} only
         text = re.sub(r'\$\{([^}]+)\}|\$([A-Za-z_][A-Za-z0-9_]*)', replace_var, text)
@@ -404,6 +404,7 @@ class Interpreter:
         if stderr:
             print(stderr.strip(), file=sys.stderr)
 
+        self.debug_print(f"Function {func_name} returned code {return_code}")
         return return_code == 0
 
     def evaluate_if_statement(self, if_stmt: IfStatement) -> Any:

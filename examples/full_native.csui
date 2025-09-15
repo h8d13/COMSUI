@@ -3,11 +3,11 @@
 
 # Parse command line options using our custom opts constructor
 opts "l:extended_desc" "c:custom_desc:" "s:status_only" "t:sync_test" "f:force" "p:push" "d:debug" {
-    # Handle status-only mode immediately (temporarily disabled for testing)
-    # if s_set "$status_only"; then
-    #     block "git -c advice.statusHints=false status"
-    #     return 0
-    # fi
+    # Handle status-only mode immediately
+    if s_set "$status_only"; then
+        block "git -c advice.statusHints=false status"
+        return 0
+    fi
 
     # Convert sync flags for compatibility - simplified for now
     if s_set "$sync_test"; then
@@ -24,11 +24,11 @@ fi
 
 block --gitop "g_add" && g_status
 
-# Check if there's anything to commit (temporarily disabled for testing)
-# if block --quiet "g_staged"; then
-#     warn "No changes to commit"
-#     return 0
-# fi
+# Check if there's anything to commit
+if block --quiet "g_staged"; then
+    warn "No changes to commit"
+    return 0
+fi
 
 # ID + Date + Count per repository
 randid=$(s_random 6 "A-Z0-9")
