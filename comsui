@@ -57,7 +57,7 @@ Usage: comsui [-t][-l] [-c \"custom description\"] [-p] [-s] [-f]"
   # ID + Date + Count per repository
   randid=$(head /dev/urandom | tr -dc A-Z0-9 | head -c 6)
   today=$(date "+%m-%d")
-  repo_name=$(basename "$(git rev-parse --show-toplevel)")
+  repo_name=$(p_name "$(git rev-parse --show-toplevel)")
   count_file="/tmp/${APP}_${repo_name}_${today}"
 
   if f_no "$count_file"; then

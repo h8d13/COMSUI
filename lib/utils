@@ -5,3 +5,14 @@ f_ex() { [ -f "$1" ]; }
 f_no() { [ ! -f "$1" ]; }
 d_ex() { [ -d "$1" ]; }
 d_no() { [ ! -d "$1" ]; }
+
+# Path utilities
+p_dir() { dirname "$1"; }
+p_name() { basename "$1"; }
+
+# String utilities
+s_empty() { [ -z "$1" ]; }
+s_has() { [[ "$1" == *"$2"* ]]; }
+
+# Directory operations
+d_make() { mkdir -p "$1"; }

@@ -5,9 +5,9 @@
 if [ -n "$1" ]; then
     APP_NAME="$1"
 elif d_ex ".git"; then
-    APP_NAME=$(basename "$(git rev-parse --show-toplevel)")
+    APP_NAME=$(p_name "$(git rev-parse --show-toplevel)")
 else
-    APP_NAME=$(basename "$(pwd)")
+    APP_NAME=$(p_name "$(pwd)")
 fi
 # Copy the main script structure
 cat > "$APP_NAME" << EOF

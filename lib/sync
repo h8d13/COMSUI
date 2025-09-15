@@ -40,7 +40,7 @@ case "$*" in
             chmod +x "${HOME}${BIN_PATH}/${APP:-comsui}"
 
             # Create app-lib directory and copy all lib files
-            mkdir -p "${HOME}${BIN_PATH}/${APP:-comsui}-lib"
+            d_make "${HOME}${BIN_PATH}/${APP:-comsui}-lib"
             cp lib/* "${HOME}${BIN_PATH}/${APP:-comsui}-lib/"
 
             info "Synced $APP to ~$BIN_PATH"
