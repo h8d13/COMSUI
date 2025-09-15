@@ -105,3 +105,4 @@ test
 test python fix
 test python fix 2
 test debug increment
+test arithmetic

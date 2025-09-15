@@ -134,6 +134,32 @@ class Interpreter:
 
         text = re.sub(r'\$\(([^)]+)\)', replace_cmd, text)
 
+        # Handle arithmetic expansion like $((expression))
+        def replace_arithmetic(match):
+            expr = match.group(1)
+            # First expand variables within the expression
+            expanded_expr = self._expand_variables_only(expr)
+            self.debug_print(f"Arithmetic expansion: $(({expr})) -> $(({expanded_expr}))")
+
+            try:
+                # Evaluate the arithmetic expression
+                # Simple arithmetic parser - handles basic operations
+                import re as arithmetic_re
+
+                # Replace bash variables and clean up whitespace
+                clean_expr = expanded_expr.strip()
+
+                # Simple evaluation for basic arithmetic
+                # This handles expressions like "count + 1", "23 + 1", etc.
+                result = eval(clean_expr, {"__builtins__": {}}, {})
+                self.debug_print(f"Arithmetic result: $(({expanded_expr})) = {result}")
+                return str(result)
+            except Exception as e:
+                self.debug_print(f"Arithmetic expansion error: {e}")
+                return f"$(({expr}))"
+
+        text = re.sub(r'\$\(\(([^)]+)\)\)', replace_arithmetic, text)
+
         # Handle escape sequences
         text = text.replace('\\n', '\n').replace('\\t', '\t')
 
