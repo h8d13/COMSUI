@@ -21,6 +21,7 @@ if block --quiet "g_staged"; then
 else
     # ID + Date + Count per repository - exactly like bash version
     randid=$(s_random 6 A-Z0-9)
+    #ranid not working yet
     today=$(t_date)
     repo_name=$(g_repo)
     user_id=$(id -u)
@@ -37,7 +38,8 @@ else
 
     # Generate message exactly like bash version
     msg="$randid $(date '+%H:%M') #$(n_pad $count)"
-
+    # Missing some details liek original bash version
+    
     if u_confirm "Commit and push to $(g_upstream)?"; then
         if block --gitop "git commit -m \"$msg\""; then
             if block --gitop "git push $(g_remote) $(g_branch)"; then
