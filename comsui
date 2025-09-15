@@ -47,7 +47,7 @@ comsui() {
     # Check if there's anything to commit
   if block --quiet "g_staged"; then
     warn "No changes detected"
-    exit 1
+    block --gitop "git diff"
   fi
 
   g_status # to show info
