@@ -96,11 +96,12 @@ Last commit: $last_commit ($last_commit_time)"
  
   #block --warn "pgrep -f 'codium' || echo 'No codium processes found'"
   #block --die "pgrep -f 'codium' | xargs -r kill -TERM || echo 'Nothing to kill'
-  atom "Clearing sudo cache" "sudo -k"
-  atom "Prompting for sudo password" "sudo -v"
-  echo $SUDO_USER
-  atom "Testing sudo access" "sudo whoami"
   
+  #block --warn --pre "Clearing sudo cache" r_sudo_c
+  #block --warn --pre "Prompting for sudo password" r_sudo_p
+  #block --die --pre "Validating sudo credentials" r_sudo_v
+  #r_sudo
+
   if u_confirm "Commit and push to origin/master?"; then
     if block --gitop "git commit -m \"$msg\""; then
       if block --gitop "git push origin master"; then
