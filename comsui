@@ -58,12 +58,12 @@ Usage: comsui [-t][-l] [-c \"custom description\"] [-p] [-s] [-f]"
   randid=$(s_random 6 A-Z0-9)
   today=$(t_date)
   repo_name=$(g_repo)
-  count_file="/tmp/${APP}_${repo_name}_${today}"
+  count_f="/tmp/${APP}_${repo_name}_${today}"
 
-  if f_no "$count_file"; then
-    echo "0" > "$count_file"
+  if f_no "$count_f"; then
+    echo "0" > "$count_f"
   fi
-  count=$(f_read "$count_file" "0")
+  count=$(f_read "$count_f" "0")
   # Ensure count is a number
   count=$(n_safe "$count")
 
@@ -102,7 +102,7 @@ Last commit: $last_commit ($last_commit_time)"
       if block --gitop "git push origin master"; then
         # Increment count and write back to file
         count=$((count + 1))
-        echo "$count" > "$count_file"
+        echo "$count" > "$count_f"
         info "Count incremented to $count"
       else
         die "Git push failed, count not incremented."
