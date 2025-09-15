@@ -236,6 +236,10 @@ class Parser:
             expression = self.current_token().value
             self.advance()
             return ArithmeticExpansion(expression)
+        elif self.match(TokenType.NUMBER):
+            number = self.current_token().value
+            self.advance()
+            return StringLiteral(number)
         elif self.match(TokenType.OPTION):
             option = self.current_token().value
             self.advance()

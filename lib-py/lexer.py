@@ -232,6 +232,22 @@ class Lexer:
                 self.advance()
                 continue
 
+            if char == '>':
+                # Check for >>
+                if self.peek_char() == '>':
+                    self.tokens.append(Token(TokenType.REDIRECT_APPEND, '>>', start_line, start_column))
+                    self.advance()
+                    self.advance()
+                else:
+                    self.tokens.append(Token(TokenType.REDIRECT_OUT, '>', start_line, start_column))
+                    self.advance()
+                continue
+
+            if char == '<':
+                self.tokens.append(Token(TokenType.REDIRECT_IN, '<', start_line, start_column))
+                self.advance()
+                continue
+
             if char == '(':
                 self.tokens.append(Token(TokenType.LPAREN, '(', start_line, start_column))
                 self.advance()

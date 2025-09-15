@@ -32,6 +32,9 @@ class TokenType(Enum):
     OR = auto()
     SEMICOLON = auto()
     EQUALS = auto()  # = for variable assignment
+    REDIRECT_OUT = auto()  # >
+    REDIRECT_APPEND = auto()  # >>
+    REDIRECT_IN = auto()  # <
 
     # Punctuation
     LPAREN = auto()

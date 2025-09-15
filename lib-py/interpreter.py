@@ -451,7 +451,18 @@ class Interpreter:
             self._execute_in_session(export_cmd)
 
         # Execute function in persistent session
-        cmd = f"{func_name} {' '.join(f'\"{arg}\"' for arg in args)}"
+        # Check if this looks like a shell command with redirection
+        if len(args) >= 2 and args[-2] in ['>', '>>', '<']:
+            # Reconstruct command with proper redirection
+            redirect_op = args[-2]
+            redirect_target = args[-1]
+            cmd_args = args[:-2]
+            if cmd_args:
+                cmd = f"{func_name} {' '.join(f'\"{arg}\"' for arg in cmd_args)} {redirect_op} \"{redirect_target}\""
+            else:
+                cmd = f"{func_name} {redirect_op} \"{redirect_target}\""
+        else:
+            cmd = f"{func_name} {' '.join(f'\"{arg}\"' for arg in args)}"
         stdout, stderr, return_code = self._execute_in_session(cmd)
 
         if stdout:
