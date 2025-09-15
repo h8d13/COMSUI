@@ -82,8 +82,11 @@ if u_confirm "Commit and push to $(g_upstream)?"; then
     if block --gitop "git commit -m \$'$msg'"; then
         if block --gitop "git push $(g_remote) $(g_branch)"; then
             # Increment count and write back to file
+            info "DEBUG: Before increment, count is: $count"
             count=$((count + 1))
+            info "DEBUG: After increment, count is: $count"
             echo "$count" > "$count_f"
+            info "DEBUG: Wrote $count to file $count_f"
             info "Count incremented to $count"
         else
             die "Git push failed, count not incremented."
