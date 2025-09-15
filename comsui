@@ -41,16 +41,13 @@ comsui() {
   if ! g_check; then
     die "Error: Not in a git repository"
   fi
-
-  # always add from root level . first
-  block --gitop "g_add" && g_status # to show info
   
+  git diff && block --gitop "g_add"
   # Check if there's anything to commit
   if block --quiet "g_staged"; then
     warn "No changes detected"
-    exit 1
+    exit 0
   fi
-
   
 
   if f_no "$count_f"; then
@@ -96,6 +93,7 @@ Last commit: $last_commit ($last_commit_time)"
 
   if u_confirm "Commit and push to $(g_upstream)?"; then
     if block --gitop "git commit -m \"$msg\""; then
+      g_status
       if block --gitop "git push $(g_remote) $(g_branch)"; then
         # Increment count and write back to file
         count=$((count + 1))
