@@ -92,8 +92,7 @@ Last commit: $last_commit ($last_commit_time)"
   #block --die "pgrep -f 'codium' | xargs -r kill -TERM || echo 'Nothing to kill'
 
   if u_confirm "Commit and push to $(g_upstream)?"; then
-    if block --gitop "git commit -m \"$msg\""; then
-      g_status
+    if block --gitop "git commit -m \"$msg\"" && g_status; then
       if block --gitop "git push $(g_remote) $(g_branch)"; then
         # Increment count and write back to file
         count=$((count + 1))
