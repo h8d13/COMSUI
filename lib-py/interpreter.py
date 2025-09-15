@@ -119,6 +119,9 @@ class Interpreter:
 
         text = re.sub(r'\$\(([^)]+)\)', replace_cmd, text)
 
+        # Handle escape sequences
+        text = text.replace('\\n', '\n').replace('\\t', '\t')
+
         return text
 
     def evaluate(self, node: ASTNode) -> Any:
@@ -182,7 +185,9 @@ class Interpreter:
                 self._execute_in_session(export_cmd)
 
             # Execute block function in persistent session
-            cmd = f"block {' '.join(bash_args)} \"{command}\""
+            # Handle multiline commands by properly escaping
+            escaped_command = command.replace('"', '\\"').replace('\n', '\\n')
+            cmd = f"block {' '.join(bash_args)} \"{escaped_command}\""
             stdout, stderr, return_code = self._execute_in_session(cmd)
 
             if stdout:
