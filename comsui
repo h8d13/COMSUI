@@ -52,7 +52,6 @@ Usage: comsui [-t][-l] [-c \"custom description\"] [-p] [-s] [-f]"
     # Check if there's anything to commit
   if block --quiet "g_staged"; then
     die "No changes to commit"
-    return 1
   fi
 
   g_status # to show info
