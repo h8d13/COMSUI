@@ -7,10 +7,13 @@ if [ -f "$(dirname "$0")/${APP}-lib/colors" ]; then
     . "$(dirname "$0")/${APP}-lib/colors"
     . "$(dirname "$0")/${APP}-lib/sync"
     . "$(dirname "$0")/${APP}-lib/block"
+    . "$(dirname "$0")/${APP}-lib/const"
+
 else
     # Running from repository
     . "$(dirname "$0")/lib/utils"
     . "$(dirname "$0")/lib/colors"
     . "$(dirname "$0")/lib/sync"
     . "$(dirname "$0")/lib/block"
+    . "$(dirname "$0")/lib/const"
 fi

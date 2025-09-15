@@ -11,10 +11,6 @@ fi
 
 comsui() {
 
-  # Check for options
-  extended_desc=""
-  custom_desc=""
-
   while [[ $# -gt 0 ]]; do
     case $1 in
       -l)
@@ -34,8 +30,7 @@ comsui() {
         shift
         ;;
       *)
-        die "Unknown option: $1
-Usage: comsui [-t][-l] [-c \"custom description\"] [-p] [-s] [-f]"
+        die "Unknown option: $1 Usage: comsui [-t][-l] [-c \"custom description\"] [-p] [-s] [-f]"
         ;;
     esac
   done
@@ -55,13 +50,6 @@ Usage: comsui [-t][-l] [-c \"custom description\"] [-p] [-s] [-f]"
   fi
 
   g_status # to show info
-
-  # ID + Date + Count per repository
-  randid=$(s_random 6 A-Z0-9)
-  today=$(t_date)
-  repo_name=$(g_repo)
-  user_id=$(n_user)
-  count_f="/tmp/${APP}_${repo_name}_${today}_${user_id}"
 
   if f_no "$count_f"; then
     echo "0" > "$count_f"
