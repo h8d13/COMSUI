@@ -43,6 +43,9 @@ g_last() { git log -1 --format="%h - %s" 2>/dev/null || echo "No previous commit
 g_add() { git add .; }
 g_status() { git -c advice.statusHints=false status; }
 g_staged() { git diff --staged --quiet; }
+g_branch() { git branch --show-current; }
+g_remote() { git config --get branch.$(g_branch).remote || echo "origin"; }
+g_upstream() { git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null || echo "$(g_remote)/$(g_branch)"; }
 
 # Time utilities
 t_date() { date "${1:-+%m-%d}"; }

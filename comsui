@@ -94,7 +94,7 @@ Last commit: $last_commit ($last_commit_time)"
   # Example r_upgrade usage:
   #r_upgrade "user"     # Ensures running as regular user
   #r_upgrade "clear"    # Clears sudo cache for security and reprompts
-  r_upgrade "admin" sh -c 'echo $(whoami)'  # Ensures sudo available for admin tasks adn wraps command with sudo
+  #r_upgrade "admin" sh -c 'echo $(whoami)'  # Ensures sudo available for admin tasks adn wraps command with sudo
 
   #block --die "which node && echo 'Node found'"
   #block --die "which npm && npm --version"
@@ -103,9 +103,9 @@ Last commit: $last_commit ($last_commit_time)"
   #block --warn "pgrep -f 'codium' || echo 'No codium processes found'"
   #block --die "pgrep -f 'codium' | xargs -r kill -TERM || echo 'Nothing to kill'
   
-  if u_confirm "Commit and push to origin/master?"; then
+  if u_confirm "Commit and push to $(g_upstream)?"; then
     if block --gitop "git commit -m \"$msg\""; then
-      if block --gitop "git push origin master"; then
+      if block --gitop "git push $(g_remote) $(g_branch)"; then
         # Increment count and write back to file
         count=$((count + 1))
         echo "$count" > "$count_f"
