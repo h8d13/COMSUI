@@ -11,6 +11,7 @@ COMSUI is a domain-specific language for system operations and automation, with 
 
 ## Quick Start
 
+test
 ```bash
 # Bash runtime
 ./comsui *args

@@ -41,7 +41,7 @@ g_repo() { p_name "$(git rev-parse --show-toplevel)"; }
 g_check() { git rev-parse --git-dir >/dev/null 2>&1; }
 g_last() { git log -1 --format="%h - %s" 2>/dev/null || echo "No previous commits"; }
 g_add() { git add .; }
-g_status() { git -c advice.statusHints=false status; }
+g_status() { git -c color.status=always status advice.statusHints=false; }
 g_staged() { git diff --staged --quiet; }
 g_branch() { git branch --show-current; }
 g_remote() { git config --get branch.$(g_branch).remote || echo "origin"; }
