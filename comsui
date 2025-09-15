@@ -92,8 +92,8 @@ Last commit: $last_commit ($last_commit_time)"
   fi
 
   # Example r_upgrade usage:
-  #r_upgrade "user"     # Ensures running as regular user
-  r_upgrade "clear"    # Clears sudo cache for security and reprompts
+  r_upgrade "user"     # Ensures running as regular user
+  #r_upgrade "clear"    # Clears sudo cache for security and reprompts
   #r_upgrade "admin"    # Ensures sudo available for admin tasks
 
   #block --die "which node && echo 'Node found'"
