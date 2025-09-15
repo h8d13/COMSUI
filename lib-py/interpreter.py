@@ -136,8 +136,10 @@ class Interpreter:
         # Handle arithmetic expansion like $((expression))
         def replace_arithmetic(match):
             expr = match.group(1)
+            self.debug_print(f"Processing arithmetic: $(({expr}))")
             # First expand variables within the expression
             expanded_expr = self._expand_variables_only(expr)
+            self.debug_print(f"Expanded arithmetic expr: {expanded_expr}")
 
             try:
                 # Simple arithmetic evaluation for basic expressions
@@ -150,12 +152,16 @@ class Interpreter:
                 # Use Python's eval for simple arithmetic (safe with restricted builtins)
                 # This handles expressions like "23+1", "count+1", etc.
                 result = eval(clean_expr, {"__builtins__": {}}, {})
+                self.debug_print(f"Arithmetic result: {clean_expr} = {result}")
                 return str(int(result))
             except Exception as e:
                 self.debug_print(f"Arithmetic expansion error: {e} for expression: {expanded_expr}")
                 return "0"
 
+        original_text = text
         text = re.sub(r'\$\(\(([^)]+)\)\)', replace_arithmetic, text)
+        if original_text != text:
+            self.debug_print(f"Arithmetic replacement: '{original_text}' -> '{text}'")
 
         # Handle escape sequences
         text = text.replace('\\n', '\n').replace('\\t', '\t')

@@ -110,3 +110,4 @@ test fixed python version
 test proper fix
 final test
 test bash version
+debug arithmetic
