@@ -14,12 +14,10 @@ fi
 if [ -f "$(dirname "$0")/${APP}-lib/struc" ]; then
     . "$(dirname "$0")/${APP}-lib/struc"
     info "Running from bin installation."
-else
+else [ -f "$(dirname "$0")/lib/struc" ]; then
     . "$(dirname "$0")/lib/struc"
     info "Running from repository."
 fi
-
-
 
 # Only run sync if argument matches
 case "$*" in
