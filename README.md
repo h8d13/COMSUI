@@ -96,23 +96,4 @@ fi
 ./csui_py examples/full_native.csui     # Complete git workflow
 ./csui_py --debug examples/simple_test.csui # Debug mode
 ./csui_py --transpile examples/simple_test.csui # Convert to bash
-```test change
-test change 2
-test change 3
-test python version
-debug python 2
-test
-test python fix
-test python fix 2
-test debug increment
-test arithmetic
-test fixed python version
-test proper fix
-final test
-test bash version
-debug arithmetic
-test final fix
-final working test
-debug final
-test final complete fix
-debug user
+```
