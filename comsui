@@ -58,7 +58,8 @@ Usage: comsui [-t][-l] [-c \"custom description\"] [-p] [-s] [-f]"
   randid=$(s_random 6 A-Z0-9)
   today=$(t_date)
   repo_name=$(g_repo)
-  count_f="/tmp/${APP}_${repo_name}_${today}"
+  user_id=$(id -u)
+  count_f="/tmp/${APP}_${repo_name}_${today}_${user_id}"
 
   if f_no "$count_f"; then
     echo "0" > "$count_f"
